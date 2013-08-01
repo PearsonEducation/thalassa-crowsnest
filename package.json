@@ -1,0 +1,42 @@
+{
+  "name": "thalassa-crowsnest",
+  "version": "0.0.0",
+  "description": "A vantage point for Thalassa",
+  "main": "index.js",
+  "scripts": {
+    "test": "jshint *.js lib/*.js test/*.js public/js/*.js --config .jshintrc && mocha test/test*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PearsonEducation/thalassa-crowsnest.git"
+  },
+  "keywords": [
+    "thalassa",
+    "haproxy",
+    "loadbalancer",
+    "proxy",
+    "seaport"
+  ],
+  "author": "Mike Brevoort <mike.brevoort@pearson.com>",
+  "license": "TBD",
+  "readmeFilename": "README.md",
+  "gitHead": "b2733f07bbd12ad87f9714639b48e912c6301b4a",
+  "bugs": {
+    "url": "https://github.com/PearsonEducation/thalassa-crowsnest/issues"
+  },
+  "devDependencies": {
+    "mocha": "~1.12.0"
+  },
+  "dependencies": {
+    "optimist": "~0.6.0",
+    "shoe": "0.0.11",
+    "reconnect": "~1.5.1",
+    "cli-color": "~0.2.2",
+    "hapi": "~1.9.0",
+    "thalassa": "git+ssh://git@github.com:PearsonEducation/Thalassa.git",
+    "browserify": "~2.25.1",
+    "websocket-stream": "~0.2.0",
+    "mux-demux": "~3.7.8",
+    "crdt": "~3.5.2"
+  }
+}

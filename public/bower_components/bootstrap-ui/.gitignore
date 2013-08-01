@@ -6,11 +6,16 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.swp
+*.swo
+.DS_Store
 
 pids
 logs
 results
+dist
 
-npm-debug.log
 node_modules
-public/js/bundle.js
+npm-debug.log
+
+template/**/*.js

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/app.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+  <script src="/js/bundle.js"></script>
+  <script src="/bower_components/underscore/underscore-min.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/browserifyService.js"></script>
+  <script src="/js/underscoreService.js"></script>
+  <script src="/js/dataStreamService.js"></script>
+  <script src="/js/DashboardController.js"></script>
+  <script src="/js/PoolsController.js"></script>
+  <script src="/js/ServicesController.js"></script>
+  <script src="/js/ActivityController.js"></script>
+  <script src="/js/NavigationController.js"></script>
+  <script src="/bower_components/jquery/jquery.min.js"></script>
+  <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  </script>
+</head>
+<body ng-app="crowsnest">
+  <div class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" ng-controller="NavigationController">
+    <div class="container">
+      <a href="../" class="navbar-brand">Thalassa Crowsnest</a>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <div class="nav-collapse bs-navbar-collapse collapse" style="height: 0px;">
+        <ul class="nav navbar-nav">
+          <li ng-class="{active: $route.current.active == 'dashboard'}">
+            <a href="/">Dashboard</a>
+          </li>
+          <li ng-class="{active: $route.current.active == 'pools'}">
+            <a href="/pools">Aqueduct Pools</a>
+          </li>
+          <li ng-class="{active: $route.current.active == 'services'}">
+            <a href="/services">Services</a>
+          </li>
+          <li ng-class="{active: $route.current.active == 'activity'}">
+            <a href="/activity">Activity</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id ="view-container" class="container" ng-view>
+  </div>
+</body>
+</html>

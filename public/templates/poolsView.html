@@ -1,0 +1,20 @@
+<h2>Pools</h2>
+<ul>
+	<li ng-repeat="(id, ps) in poolServers">{{ps.meta.service.hostname}} / {{ps.meta.service.host}}:{{ps.meta.service.port}}
+	<p>Frontends</p>
+	<ul>
+		<li ng-repeat="(id, fe) in ps.getFrontends()">{{fe.name}} [{{ps.getFrontendStatus(fe.name).status}}] {{fe.bind}} -> {{fe.backend}}</li>
+	</ul>
+	<p>Backends</p>
+	<ul>
+		<li ng-repeat="(id, be) in ps.getBackends()">
+			{{be.name}} [{{ps.getBackendStatus(be.name).status}}]  - {{ps.getBackendMemberHealthCount(be.name)}}/{{be.members.length}}
+			<span ng-switch on="be.type">
+				<span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
+				<span ng-switch-when="static">static</span>
+			</span>
+
+		</li>
+	</ul>
+	</li>
+</ul>
