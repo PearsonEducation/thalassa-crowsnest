@@ -6,6 +6,9 @@
   "scripts": {
     "test": "jshint *.js lib/*.js test/*.js public/js/*.js --config .jshintrc && mocha test/test*"
   },
+  "bin": {
+    "crowsnest-server": "./bin/server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/PearsonEducation/thalassa-crowsnest.git"
@@ -37,6 +40,7 @@
     "browserify": "~2.25.1",
     "websocket-stream": "~0.2.0",
     "mux-demux": "~3.7.8",
-    "crdt": "~3.5.2"
+    "crdt": "~3.5.2",
+    "ws": "0.4.27"
   }
 }
