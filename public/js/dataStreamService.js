@@ -7,36 +7,23 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     , reconnect = browserify.reconnect
     ;
 
-  var thalassaClientDoc  = new crdt.Doc();
-  var thalassaServicesSet = thalassaClientDoc.createSet('type', 'service');
+//
+// Because of the way CRDT currently works we need to clobber and recreate all of the CRTD
+// docs on reconnection. The issue is that we are twice removed from other CRDT docs and when
+// the doc in the middle goes away and is replaced by a new doc, the docs on either end aren't
+// getting the change event relayed to them because the the perspective of a doc on the edge 
+// and the doc in the center, he doesn't need the updates because he was just born and shouldn't
+// care about hsitorical changes --- THATS MY HUNCH ANYWAY
+// It's a shame to have to clobber and resync all of the data though.... defeats the purpose a bit
+//
 
   var services = [];
-
+  var aqueductServers = {};
   var data = new events.EventEmitter();
   data.getServices = function getServices () { return services; };
   data.getPoolServers = function getPoolServers () { return aqueductServers; };
   data.connection = null;
-
-  // TODO add debounce
-  thalassaServicesSet.on('add', function (row) {
-    var service = row.toJSON();
-    service.sortKey = service.role+'~'+service.version+'~'+service.host+'~'+service.port;
-    services.push(service)
-    services = services.sort(function (a,b) { return (a.sortKey > b.sortKey) ? 1 : -1 });
-    data.emit('services-changed');
-  })
-
-  thalassaServicesSet.on('changes', function (Row, changed) {
-  });
-
-  thalassaServicesSet.on('remove', function (row) {
-    var service = row.toJSON();
-    services = services.filter(function (s) { return s.id !== service.id; });
-    console.log('FREE', service)
-    data.emit('services-changed');
-  })
-
-  var aqueductServers = {};
+  var thalassaClientDoc = null;
 
   function AqueductServer(meta) {
     var id = meta.service.id;
@@ -136,20 +123,53 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       this.statsSet.removeAllListeners();
       this.doc.dispose();
       this.doc.removeAllListeners();
-      thalassaServicesSet.removeListener('remove', handleServiceRemove);
+      data.removeListener('service-removed', handleServiceRemove);
       delete aqueductServers[id];
       data.emit('pools-changed');
     };
 
-    thalassaServicesSet.on('remove', handleServiceRemove);
-    thalassaServicesSet.on('changes', function (a,b,c) {
-      console.log('CHANGES',a,b,c)
-    });
+    data.on('service-removed', handleServiceRemove);
+
     aqueductServers[id] = this;
   }
 
+
+  function reinitialize() {
+    // reset
+    for(key in aqueductServers) {
+      aqueductServers[key].destroy();
+    }
+    services = [];
+
+    thalassaClientDoc  = new crdt.Doc();
+    var thalassaServicesSet = thalassaClientDoc.createSet('type', 'service');
+
+    // TODO add debounce
+    thalassaServicesSet.on('add', function (row) {
+      var service = row.toJSON();
+      service.sortKey = service.role+'~'+service.version+'~'+service.host+'~'+service.port;
+      services.push(service)
+      services = services.sort(function (a,b) { return (a.sortKey > b.sortKey) ? 1 : -1 });
+      data.emit('services-changed');
+    })
+
+    thalassaServicesSet.on('changes', function (Row, changed) {
+    });
+
+    thalassaServicesSet.on('remove', function (row) {
+      var service = row.toJSON();
+      services = services.filter(function (s) { return s.id !== service.id; });
+      console.log('FREE', service)
+      data.emit('services-changed');
+      data.emit('service-removed', row);
+    });
+
+  }
+
+
   data.connection = reconnect(function (stream) {
     console.log('in reconnect')
+    reinitialize();
 
     var mx = new MuxDemux(function (s) {
       if (s.meta.type === 'aqueduct') {
@@ -180,17 +200,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       mx.destroy();
     })
   }).connect('/aqueductStreams');
-
-  data.connection.on('connect', function () { console.log('connect'); });
-  data.connection.on('disconnect', function () { console.log('disconnect'); });
-  data.connection.on('backoff', function (a, d) { console.log('backoff', a, d); });
-  data.connection.on('reconnect', function (a,d) { console.log('reconnect', a, d); });
-  //document.body.appendChild(r.widget())
-//  var stream = shoe('/aqueductStreams');
-  //stream.on('data', console.log.bind(console))
-
-  //var rtStream = routeTable.createStream();
-  
 
 
   return data;
