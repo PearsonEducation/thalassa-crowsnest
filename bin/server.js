@@ -53,9 +53,20 @@ server.route({
     }
 });
 
-shoe(function (sock) {
-  sock.pipe(crowsnest.createReadableMuxStream()).pipe(sock);
-}).install(server.listener, '/aqueductStreams');
+var sock = shoe();
+sock.install(server.listener, '/aqueductStreams');
+sock.on('connection', function (stream) {
+  var s = crowsnest.createReadableMuxStream();
+  stream.pipe(s).pipe(stream);
+
+  stream.on('end', function () {
+    console.log("CCCLOSE");
+    s.destroy();
+  })
+
+});
+
+sock.on('log', function (severity, msg) { console.log(severity, msg) })
 
 
 server.start(function () {
