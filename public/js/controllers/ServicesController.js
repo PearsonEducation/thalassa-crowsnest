@@ -1,4 +1,4 @@
-angular.module('crowsnest').controller('ServicesController', function ($scope, dataStream) {
+angular.module('crowsnest').controller('ServicesController', function ($scope, $location, dataStream) {
   $scope.services = dataStream.getServices();
 
   // TODO better way to handle this data binding, need to reset the array because the
@@ -7,4 +7,5 @@ angular.module('crowsnest').controller('ServicesController', function ($scope, d
     $scope.services = dataStream.getServices();
     $scope.$apply();
   });
+
 });

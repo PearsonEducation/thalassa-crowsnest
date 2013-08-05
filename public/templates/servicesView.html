@@ -1,4 +1,7 @@
 <h2>Services</h2>
+<input placeholder="Type to filter" ng-model="filterText" class="ng-pristine ng-valid">
 <ul>
-	<li ng-repeat="service in services">{{service.role}}@{{service.version}}{{service.host}}:{{service.port}}</li>
+	<li ng-repeat="service in services | filter:filterText">
+		{{service.role}}@{{service.version}} - {{service.host}}:{{service.port}} - {{service.hostname}}({{service.pid}})
+	</li>
 </ul>

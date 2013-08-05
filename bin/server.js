@@ -44,6 +44,7 @@ var server = Hapi.createServer(argv.host, argv.port);
 
 // anything at the top level goes to index.html
 server.route({ method: 'GET', path: '/{p}', handler: { file: { path: './public/index.html' }}});
+server.route({ method: 'GET', path: '/pools/{p}', handler: { file: { path: './public/index.html' }}});
 
 server.route({
     method: 'GET',

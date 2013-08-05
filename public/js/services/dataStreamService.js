@@ -22,8 +22,17 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   var data = new events.EventEmitter();
   data.getServices = function getServices () { return services; };
   data.getPoolServers = function getPoolServers () { return aqueductServers; };
+  data.getPoolServer = function getPoolServer(host, port) {
+    port = parseInt(port);
+    return (Object.keys(aqueductServers)
+      .map(function (key) { return aqueductServers[key]; })
+      .filter(function (ps) { return (ps.meta.service.host === host && ps.meta.service.port === port);})[0])
+  }
   data.connection = null;
   var thalassaClientDoc = null;
+
+  var emitServicesChanged = _.debounce(function () { data.emit('services-changed') }, 400);
+  var emitPoolsChanged = _.debounce(function () { data.emit('pools-changed') }, 400);
 
   function AqueductServer(meta) {
     var id = meta.service.id;
@@ -125,7 +134,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       this.doc.removeAllListeners();
       data.removeListener('service-removed', handleServiceRemove);
       delete aqueductServers[id];
-      data.emit('pools-changed');
+      emitPoolsChanged();
     };
 
     data.on('service-removed', handleServiceRemove);
@@ -144,13 +153,12 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     thalassaClientDoc  = new crdt.Doc();
     var thalassaServicesSet = thalassaClientDoc.createSet('type', 'service');
 
-    // TODO add debounce
     thalassaServicesSet.on('add', function (row) {
       var service = row.toJSON();
       service.sortKey = service.role+'~'+service.version+'~'+service.host+'~'+service.port;
       services.push(service)
       services = services.sort(function (a,b) { return (a.sortKey > b.sortKey) ? 1 : -1 });
-      data.emit('services-changed');
+      emitServicesChanged();
     })
 
     thalassaServicesSet.on('changes', function (Row, changed) {
@@ -159,8 +167,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     thalassaServicesSet.on('remove', function (row) {
       var service = row.toJSON();
       services = services.filter(function (s) { return s.id !== service.id; });
-      console.log('FREE', service)
-      data.emit('services-changed');
+      emitServicesChanged();
       data.emit('service-removed', row);
     });
 
@@ -168,16 +175,14 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
 
 
   data.connection = reconnect(function (stream) {
-    console.log('in reconnect')
     reinitialize();
 
     var mx = new MuxDemux(function (s) {
       if (s.meta.type === 'aqueduct') {
-        console.log("NEW s1", s)
         var server = AqueductServer(s.meta);
 
         server.doc.on('row_update', function (row) {
-          data.emit('pools-changed');
+          emitPoolsChanged();
         });
 
         var docStream = server.doc.createStream({ sendClock: true });
@@ -186,7 +191,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
         stream.once('close', docStream.destroy.bind(docStream));
       }
       else if (s.meta.type === 'thalassa') {
-        console.log("NEW s2", s)
         var clientDocStream = thalassaClientDoc.createStream();
         s.pipe(clientDocStream).pipe(s);
         s.once('close', clientDocStream.destroy.bind(clientDocStream));
@@ -196,7 +200,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
 
     stream.pipe(mx).pipe(stream);
     stream.once('close', function () {
-      console.log('stream closed');
       mx.destroy();
     })
   }).connect('/aqueductStreams');

@@ -1,6 +1,7 @@
 <h2>Pools</h2>
-<ul>
-	<li ng-repeat="(id, ps) in poolServers">{{ps.meta.service.hostname}} / {{ps.meta.service.host}}:{{ps.meta.service.port}}
+<div class="well col-lg-6 pool-summary" ng-click="navigateToDetail(ps)"
+     ng-repeat="(id, ps) in poolServers">
+     <h3>{{ps.meta.service.hostname}} / {{ps.meta.service.host}}:{{ps.meta.service.port}}</h3>
 	<p>Frontends</p>
 	<ul>
 		<li ng-repeat="(id, fe) in ps.getFrontends()">{{fe.name}} [{{ps.getFrontendStatus(fe.name).status}}] {{fe.bind}} -> {{fe.backend}}</li>
@@ -16,5 +17,4 @@
 
 		</li>
 	</ul>
-	</li>
-</ul>
+</div>
