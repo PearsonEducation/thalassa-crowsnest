@@ -4,7 +4,8 @@
   "description": "A vantage point for Thalassa",
   "main": "index.js",
   "scripts": {
-    "test": "jshint *.js lib/*.js test/*.js public/js/*.js --config .jshintrc && mocha test/test*"
+    "test": "jshint *.js lib/*.js test/*.js public/js/*.js --config .jshintrc && mocha test/test*",
+    "start": "browserify public/js/services/browserifyService.js -o public/js/browserifyServiceBundle.js && ./bin/server.js --debug"
   },
   "bin": {
     "crowsnest-server": "./bin/server.js"
