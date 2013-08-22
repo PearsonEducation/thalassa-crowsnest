@@ -37,7 +37,7 @@
     "reconnect": "~1.5.1",
     "cli-color": "~0.2.2",
     "hapi": "~1.9.0",
-    "thalassa": "git+ssh://git@github.com:PearsonEducation/Thalassa.git",
+    "thalassa": "git+ssh://git@github.com:PearsonEducation/thalassa.git",
     "browserify": "~2.25.1",
     "websocket-stream": "~0.2.0",
     "mux-demux": "~3.7.8",
