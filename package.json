@@ -8,7 +8,7 @@
     "start": "browserify public/js/services/browserifyService.js -o public/js/browserifyServiceBundle.js && ./bin/server.js --debug"
   },
   "bin": {
-    "crowsnest-server": "./bin/server.js"
+    "thalassa-crowsnest": "./bin/server.js"
   },
   "repository": {
     "type": "git",

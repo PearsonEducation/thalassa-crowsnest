@@ -61,7 +61,6 @@ sock.on('connection', function (stream) {
   stream.pipe(s).pipe(stream);
 
   stream.on('end', function () {
-    console.log("CCCLOSE");
     s.destroy();
   })
 

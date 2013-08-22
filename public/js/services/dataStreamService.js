@@ -22,11 +22,10 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   var data = new events.EventEmitter();
   data.getServices = function getServices () { return services; };
   data.getPoolServers = function getPoolServers () { return aqueductServers; };
-  data.getPoolServer = function getPoolServer(host, port) {
-    port = parseInt(port);
+  data.getPoolServer = function getPoolServer(id) {
     return (Object.keys(aqueductServers)
       .map(function (key) { return aqueductServers[key]; })
-      .filter(function (ps) { return (ps.meta.service.host === host && ps.meta.service.port === port);})[0])
+      .filter(function (ps) { return (id === id)})[0]);
   }
   data.connection = null;
   var thalassaClientDoc = null;
@@ -35,13 +34,14 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   var emitPoolsChanged = _.debounce(function () { data.emit('pools-changed') }, 400);
 
   function AqueductServer(meta) {
-    var id = meta.service.id;
+    var id = meta.service.hostname + ':' + meta.service.host + ':' + meta.service.port;
     if (!(this instanceof AqueductServer)) {
       return aqueductServers[id] || new AqueductServer(meta);
     }
 
     var self = this;
-    this.id = id;
+    this.id= id;
+    this._id = meta.service.id;
     this.meta = meta;
     this.doc = new crdt.Doc();
 

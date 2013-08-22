@@ -1,7 +1,7 @@
 <h2>Pools</h2>
-<div class="well col-lg-6 pool-summary" ng-click="navigateToDetail(ps)"
-     ng-repeat="(id, ps) in poolServers">
-     <h3>{{ps.meta.service.hostname}} / {{ps.meta.service.host}}:{{ps.meta.service.port}}</h3>
+<div class="well col-lg-6 pool-summary" ng-repeat="(id, ps) in poolServers">
+     <h3><a href="#" ng-click="navigateToDetail(ps)">{{ps.id}}</a></h3>
+     <span ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></span>
 	<p>Frontends</p>
 	<ul>
 		<li ng-repeat="(id, fe) in ps.getFrontends()">{{fe.name}} [{{ps.getFrontendStatus(fe.name).status}}] {{fe.bind}} -> {{fe.backend}}</li>

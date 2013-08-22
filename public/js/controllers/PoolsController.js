@@ -1,4 +1,4 @@
-angular.module('crowsnest').controller('PoolsController', function ($scope, $location, dataStream) {
+angular.module('crowsnest').controller('PoolsController', function ($scope, $location, dataStream, userDataService, _) {
   $scope.poolServers = dataStream.getPoolServers();
 
   dataStream.on('pools-changed', function (row) {
@@ -6,19 +6,16 @@ angular.module('crowsnest').controller('PoolsController', function ($scope, $loc
     $scope.$apply();
   });
 
-  //setTimeout(function() { $scope.$apply(); }, 1000);
-
-  // $scope.getBackendHealthyCount = function (serverId, backendId) {
-  //   var statuses =  dataStream.getPoolStatus(serverId);
-  //   var backendStatId = 'stat/' + backendId;
-  //   return 0;
-  //   // return Object.keys(statuses).filter(function (k) { console.log(k, backendStatId); return k === backendStatId; }).reduce(function (key, t) { 
-  //   //   console.log(statuses[key]);
-  //   //   return (statuses[key].status.indexOf('UP') === 0) ? 1+t : t;
-  //   // });
-  // }
-
   $scope.navigateToDetail = function (ps) {
-    $location.path('/pools/' + ps.meta.service.host + ':' + ps.meta.service.port);
+    $location.path('/pools/' + ps.id);
+  }
+
+  $scope.isFavorite = function (ps) {
+    return _.contains(userDataService.getFavorites(), ps.id);
+  }
+
+  $scope.toggleFavorite = function (ps) {
+    if ($scope.isFavorite(ps)) userDataService.removeFavorite(ps.id);
+    else userDataService.addFavorite(ps.id);
   }
 });

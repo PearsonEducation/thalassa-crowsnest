@@ -32,3 +32,19 @@
 
 .pool-summary {
 }
+
+.favorite-true {
+	color: red;
+	font-size: 2em;
+	position: absolute;
+	right: 0.25em;
+	top: 0.25em;
+}
+
+.favorite-false {
+	color: gray;
+	font-size: 1.5em;
+	position: absolute;
+	right: 0.25em;
+	top: 0.25em;
+}
