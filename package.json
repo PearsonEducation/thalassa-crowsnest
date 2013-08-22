@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jshint *.js lib/*.js test/*.js public/js/*.js --config .jshintrc && mocha test/test*",
-    "start": "browserify public/js/services/browserifyService.js -o public/js/browserifyServiceBundle.js && ./bin/server.js --debug"
+    "start": "browserify public/js/services/browserifyService.js -o public/js/browserifyServiceBundle.js && ./bin/server.js --debug",
+    "postinstall": "browserify public/js/services/browserifyService.js -o public/js/browserifyServiceBundle.js"
   },
   "bin": {
     "thalassa-crowsnest": "./bin/server.js"
