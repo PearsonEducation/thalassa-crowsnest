@@ -1,9 +1,12 @@
 angular.module('crowsnest').factory('userDataService', function (localStorageService, _) {
   var ls = localStorageService;
   var srv = {};
-  var favorites = ls.get('favorites') || '[]';
+  var favorites = null;
 
   srv.getFavorites = function () {
+    if (favorites === null) {
+      favorites = ls.get('favorites') || [];
+    }
     return favorites;
   }
 
