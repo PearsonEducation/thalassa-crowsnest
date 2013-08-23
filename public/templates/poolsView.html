@@ -1,20 +1,8 @@
 <h2>Pools</h2>
-<div class="well col-lg-6 pool-summary" ng-repeat="(id, ps) in poolServers">
-     <h3><a href="#" ng-click="navigateToDetail(ps)">{{ps.id}}</a></h3>
+<ul class="list-group proxy-list">
+<li class=" list-group-item" ng-repeat="(id, ps) in poolServers">
      <span ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></span>
-	<p>Frontends</p>
-	<ul>
-		<li ng-repeat="(id, fe) in ps.getFrontends()">{{fe.name}} [{{ps.getFrontendStatus(fe.name).status}}] {{fe.bind}} -> {{fe.backend}}</li>
-	</ul>
-	<p>Backends</p>
-	<ul>
-		<li ng-repeat="(id, be) in ps.getBackends()">
-			{{be.name}} [{{ps.getBackendStatus(be.name).status}}]  - {{ps.getBackendMemberHealthCount(be.name)}}/{{be.members.length}}
-			<span ng-switch on="be.type">
-				<span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
-				<span ng-switch-when="static">static</span>
-			</span>
-
-		</li>
-	</ul>
-</div>
+     <a href="#" ng-click="navigateToDetail(ps)">{{ps.meta.service.hostname}}</a>
+     <span>{{ps.meta.service.host}}</span>
+</li>
+</ul>

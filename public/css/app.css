@@ -30,21 +30,30 @@
 	background-color: #FF7F00;
 }
 
-.pool-summary {
-}
-
 .favorite-true {
 	color: red;
-	font-size: 2em;
-	position: absolute;
-	right: 0.25em;
-	top: 0.25em;
 }
 
 .favorite-false {
 	color: gray;
-	font-size: 1.5em;
+}
+
+div.favorites .favorite-true,
+div.favorites .favorite-false {
 	position: absolute;
 	right: 0.25em;
 	top: 0.25em;
+	font-size: 2em;
+}
+
+.proxy-list li a {
+	font-weight: bold;
+	font-size: 1.2em;
+	margin-right: 0.5em;
+}
+
+.proxy-list .favorite-true,
+.proxy-list .favorite-false {
+	font-size: 1.2em;
+	margin-right: 0.5em;
 }

@@ -1,5 +1,5 @@
 <h2>Favorites</h2>
-<div class="well col-lg-6 pool-summary" ng-repeat="ps in favorites">
+<div class="well col-lg-6 favorites" ng-repeat="ps in favorites">
      <h3><a href="#" ng-click="navigateToDetail(ps)">{{ps.id}}</a></h3>
      <span ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></span>
 	<p>Frontends</p>
