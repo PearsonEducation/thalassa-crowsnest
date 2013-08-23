@@ -174,7 +174,8 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   }
 
 
-  data.connection = reconnect(function (stream) {
+  //data.connection = reconnect(function (stream) {
+    var stream = shoe('/aqueductStreams');
     reinitialize();
 
     var mx = new MuxDemux(function (s) {
@@ -202,12 +203,12 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     stream.once('close', function () {
       mx.destroy();
     })
-  });
-  data.connection.on('connect', console.log.bind(console));
-  data.connection.on('disconnect', console.log.bind(console));
-  data.connection.on('backoff', console.log.bind(console));
-  data.connection.on('reconnect', console.log.bind(console));
-  data.connection.connect('/aqueductStreams');
+  // });
+  // data.connection.on('connect', console.log.bind(console));
+  // data.connection.on('disconnect', console.log.bind(console));
+  // data.connection.on('backoff', console.log.bind(console));
+  // data.connection.on('reconnect', console.log.bind(console));
+  // data.connection.connect('http://10.199.240.41/aqueductStreams');
 
 
   return data;
