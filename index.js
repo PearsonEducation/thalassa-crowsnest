@@ -10,10 +10,10 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
   this.thalassa = new ThalassaAgent({
     host: opts.thalassaHost,
     port: opts.thalassaPort,
+    apiport: opts.thalassaApiPort,
     log: opts.log 
   });
   this.thalassa.client.register(pkg.name, pkg.version, opts.port);
-
 
   this.createReadableMuxStream = this.thalassa.createReadableMuxStream.bind(this.thalassa);
 }
