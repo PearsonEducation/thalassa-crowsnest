@@ -11,7 +11,7 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
   });
 
   $scope.navigateToDetail = function (ps) {
-    $location.path('/pools/' + ps.id);
+    $location.path('/pools/' + encodeURIComponent(ps.id));
   }
 
   $scope.isFavorite = function (ps) {

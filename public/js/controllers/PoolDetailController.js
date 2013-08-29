@@ -1,5 +1,5 @@
 angular.module('crowsnest').controller('PoolDetailController', function ($scope, $routeParams, dataStream, userDataService) {
-  var id = $routeParams.id;
+  var id = decodeURIComponent($routeParams.id);
   $scope.ps = dataStream.getPoolServer(id);
 
   dataStream.on('pools-changed', function (row) {

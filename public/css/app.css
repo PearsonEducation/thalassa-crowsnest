@@ -68,6 +68,10 @@ div.favorites .favorite-false {
 	margin-top: 5px;
 }
 
+.activity-list small {
+	color: gray;
+}
+
 .label-online {
 	background-color: #5cb85c;
 }
