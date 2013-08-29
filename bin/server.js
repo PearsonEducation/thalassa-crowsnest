@@ -70,7 +70,9 @@ sock.on('connection', function (stream) {
 
 });
 
-sock.on('log', function (severity, msg) { console.log(severity, msg) })
+sock.on('log', function (severity, msg) {
+  log(severity, msg);
+})
 
 
 server.start(function () {

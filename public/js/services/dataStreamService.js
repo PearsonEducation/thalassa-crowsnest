@@ -4,7 +4,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     , shoe = browserify.shoe
     , MuxDemux = browserify.MuxDemux
     , events = browserify.events
-    , reconnect = browserify.reconnect
     ;
 
 //
@@ -36,6 +35,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   var emitPoolsChanged = _.debounce(function () { data.emit('pools-changed') }, 400);
 
   function AqueductServer(meta) {
+    console.log('AqueductServer', meta)
     var id = meta.service.id;
     if (!(this instanceof AqueductServer)) {
       return aqueductServers[id] || new AqueductServer(meta);
@@ -152,7 +152,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     }
     services = [];
     activity = [];
-
     thalassaDoc  = new crdt.Doc();
     // create a set of all docs
     var thalassaServicesSet = thalassaDoc.createSet('type', 'service');
@@ -189,7 +188,55 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   }
 
 
-  data.connection = reconnect(function (stream) {
+  //
+  // Ripped out the reconnect module because of a race condition problem
+  // spewed this inline for now
+  // TODO: refactor connection/reconnection
+  //
+
+  function Connection(onConnect) {
+    var self = this;
+    var STOPPED = 'stopped', CONNECTED = 'connected', DISCONNECTED = 'disconnected', CONNECTING = 'connecting';
+
+    self.disconnect = function () {
+      self._changeState(STOPPED);
+      self.stream.end();
+      return self;
+    }
+
+    self.connect = function () {
+      self._changeState(CONNECTING);
+      self.stream = shoe('/aqueductStreams');
+
+      self.stream.once('end', function () {
+        console.log('disconnected', self.state);
+        if (self.state !== STOPPED) {
+          self._changeState(DISCONNECTED);
+          setTimeout(function () {
+            self.connect();
+          }, 1000);
+        }
+      });
+
+      self.stream.once('connect', function () {
+        console.log('connect')
+        self._changeState(CONNECTED);
+        onConnect(self.stream);
+      });
+      return self;
+    }
+
+    self._changeState = function (state) {
+      self.state = state;
+      self.emit(state);
+    }
+
+  }
+  Connection.prototype = new events.EventEmitter();
+
+  data.connection = new Connection(onConnect).connect();
+
+  function onConnect (stream) {
     reinitialize();
 
     var mx = new MuxDemux(function (s) {
@@ -217,13 +264,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     stream.once('close', function () {
       mx.destroy();
     })
-  });
-  data.connection.on('connect', console.log.bind(console));
-  data.connection.on('disconnect', console.log.bind(console));
-  data.connection.on('backoff', console.log.bind(console));
-  data.connection.on('reconnect', console.log.bind(console));
-  data.connection.connect('/aqueductStreams');
-
+  }
 
   return data;
 });
