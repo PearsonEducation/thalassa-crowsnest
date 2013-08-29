@@ -110,7 +110,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
 
     this.statsSet.on('add', function (row) {
       stats[row.id] = row.toJSON();
-      //console.log(stats);
     });
     this.statsSet.on('remove', function (row) {
       delete stats[row.id];

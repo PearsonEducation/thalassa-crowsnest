@@ -3,8 +3,9 @@
 	<span ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></span>
 	<p>Frontends</p>
 	<ul>
-		<li ng-repeat="(id, fe) in ps.getFrontends()">
-			{{fe.name}} [{{ps.getFrontendStatus(fe.name).status}}] <br/>
+		<li ng-repeat="(id, fe) in ps.getFrontends()" ng-init="stats=ps.getFrontendStatus(fe.name)">
+			{{fe.name}} [{{stats.status}}] <br/>
+			connections: current: {{stats.connections.current}}, max: {{stats.connections.max}} <br/> 
 			Bind: {{fe.bind}}<br/>
 			Default backend: {{fe.backend}} <br/>
 			Rules: {{fe.rules}} <br/>
@@ -13,12 +14,13 @@
 	</ul>
 	<p>Backends</p>
 	<ul>
-		<li ng-repeat="(id, be) in ps.getBackends()">
-			{{be.name}} [{{ps.getBackendStatus(be.name).status}}]  - {{ps.getBackendMemberHealthCount(be.name)}}/{{be.members.length}}
+		<li ng-repeat="(id, be) in ps.getBackends()" ng-init="stats=ps.getBackendStatus(be.name)">
+			{{be.name}} [{{stats.status}}]  - {{ps.getBackendMemberHealthCount(be.name)}}/{{be.members.length}}
 			<span ng-switch on="be.type">
 				<span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
 				<span ng-switch-when="static">static</span>
-			</span>
+			</span><br/>
+			connections: current: {{stats.connections.current}}, max: {{stats.connections.max}} <br/> 
 			<ul>
 				<li ng-repeat="member in be.members">
 					{{member.host}}:{{member.port}} 
