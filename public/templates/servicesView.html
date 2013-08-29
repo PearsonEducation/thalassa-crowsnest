@@ -1,7 +1,8 @@
 <h2>Services</h2>
 <input placeholder="Type to filter" ng-model="filterText" class="ng-pristine ng-valid">
-<ul>
+<ul class="service-list">
 	<li ng-repeat="service in services | filter:filterText">
-		{{service.role}}@{{service.version}} - {{service.host}}:{{service.port}} - {{service.hostname}}({{service.pid}})
+		<span class="glyphicon glyphicon-certificate"></span>
+		{{service.name}}@{{service.version}} - {{service.host}}:{{service.port}} - {{service.meta.hostname}}
 	</li>
 </ul>

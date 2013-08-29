@@ -18,9 +18,11 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
 //
 
   var services = [];
+  var activity = [];
   var aqueductServers = {};
   var data = new events.EventEmitter();
   data.getServices = function getServices () { return services; };
+  data.getActivity = function getServices () { return activity; };
   data.getPoolServers = function getPoolServers () { return aqueductServers; };
   data.getPoolServer = function getPoolServer(id) {
     return (Object.keys(aqueductServers)
@@ -28,13 +30,13 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       .filter(function (ps) { return (id === id)})[0]);
   }
   data.connection = null;
-  var thalassaClientDoc = null;
+  var thalassaDoc = null;
 
   var emitServicesChanged = _.debounce(function () { data.emit('services-changed') }, 400);
   var emitPoolsChanged = _.debounce(function () { data.emit('pools-changed') }, 400);
 
   function AqueductServer(meta) {
-    var id = meta.service.hostname + ':' + meta.service.host + ':' + meta.service.port;
+    var id = meta.service.id;
     if (!(this instanceof AqueductServer)) {
       return aqueductServers[id] || new AqueductServer(meta);
     }
@@ -149,15 +151,16 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       aqueductServers[key].destroy();
     }
     services = [];
+    activity = [];
 
-    thalassaClientDoc  = new crdt.Doc();
-    var thalassaServicesSet = thalassaClientDoc.createSet('type', 'service');
+    thalassaDoc  = new crdt.Doc();
+    // create a set of all docs
+    var thalassaServicesSet = thalassaDoc.createSet('type', 'service');
+    var thalassaActivitySet = thalassaDoc.createSeq('type', 'activity');
 
     thalassaServicesSet.on('add', function (row) {
-      var service = row.toJSON();
-      service.sortKey = service.role+'~'+service.version+'~'+service.host+'~'+service.port;
-      services.push(service)
-      services = services.sort(function (a,b) { return (a.sortKey > b.sortKey) ? 1 : -1 });
+      services.push(row.toJSON().service)
+      services = services.sort(function (a,b) { return (a.id > b.id) ? 1 : -1 });
       emitServicesChanged();
     })
 
@@ -169,6 +172,18 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       services = services.filter(function (s) { return s.id !== service.id; });
       emitServicesChanged();
       data.emit('service-removed', row);
+    });
+
+    thalassaActivitySet.on('add', function (row) {
+      activity.push(row.toJSON())
+      data.emit('activity-changed');
+    })
+
+    thalassaActivitySet.on('remove', function (row) {
+      var ev = row.toJSON();
+      activity = activity.filter(function (a) { return a.id !== ev.id; });
+      emitServicesChanged();
+      data.emit('activity-changed');
     });
 
   }
@@ -191,7 +206,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
         stream.once('close', docStream.destroy.bind(docStream));
       }
       else if (s.meta.type === 'thalassa') {
-        var clientDocStream = thalassaClientDoc.createStream();
+        var clientDocStream = thalassaDoc.createStream();
         s.pipe(clientDocStream).pipe(s);
         s.once('close', clientDocStream.destroy.bind(clientDocStream));
         stream.once('close', clientDocStream.destroy.bind(clientDocStream));

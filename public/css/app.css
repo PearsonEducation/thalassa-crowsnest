@@ -57,3 +57,21 @@ div.favorites .favorite-false {
 	font-size: 1.2em;
 	margin-right: 0.5em;
 }
+
+.service-list,
+.activity-list {
+	list-style: none;
+}
+
+.service-list li,
+.activity-list li {
+	margin-top: 5px;
+}
+
+.label-online {
+	background-color: #5cb85c;
+}
+
+.label-offline {
+	background-color: #d9534f;
+}

@@ -1,4 +1,4 @@
-angular.module('crowsnest').controller('DashboardController', function ($scope, dataStream, userDataService) {
+angular.module('crowsnest').controller('DashboardController', function ($scope, $location, dataStream, userDataService) {
 
   function refreshFavorites () {
     $scope.favorites = _.toArray(dataStream.getPoolServers())
@@ -9,6 +9,10 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
     refreshFavorites();
     $scope.$apply();
   });
+
+  $scope.navigateToDetail = function (ps) {
+    $location.path('/pools/' + ps.id);
+  }
 
   $scope.isFavorite = function (ps) {
     if (ps) return _.contains(userDataService.getFavorites(), ps.id);
