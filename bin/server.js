@@ -24,7 +24,7 @@ var optimist = require('optimist')
                 describe: 'port of the Thalassa server'
               },
               thalassaApiPort: {
-                default : 10000,
+                default : 9000,
                 describe: 'port of the Thalassa server'
               },
               debug: {
