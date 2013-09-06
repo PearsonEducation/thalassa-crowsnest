@@ -79,3 +79,8 @@ div.favorites .favorite-false {
 .label-offline {
 	background-color: #d9534f;
 }
+
+.time-series-label {
+    float: right;
+    font-size: 0.9em;
+}

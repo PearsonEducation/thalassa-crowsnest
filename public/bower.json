@@ -12,6 +12,8 @@
   "dependencies": {
     "bootstrap-ui": "~0.4.0",
     "bootstrap": "~3.0.0-rc1",
-    "underscore": "~1.5.1"
+    "underscore": "~1.5.1",
+    "d3": "~3.3.2",
+    "rickshaw": "~1.4.3"
   }
 }

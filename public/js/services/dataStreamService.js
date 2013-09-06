@@ -2,8 +2,10 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
 
   var crdt = browserify.crdt
     , shoe = browserify.shoe
+    , split =browserify.split
     , MuxDemux = browserify.MuxDemux
     , events = browserify.events
+    , CBuffer = browserify.CBuffer
     ;
 
 //
@@ -18,7 +20,11 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
 
   var services = [];
   var activity = [];
+  var stats = {};
+  var statSubscriptions = {};
+  var controlStream = null;
   var aqueductServers = {};
+
   var data = new events.EventEmitter();
   data.getServices = function getServices () { return services; };
   data.getActivity = function getServices () { return activity; };
@@ -29,13 +35,22 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       .filter(function (ps) { return (id === id)})[0]);
   }
   data.connection = null;
+
+  data.subscribeToStats = function (hostId) {
+    statSubscriptions[hostId] = true;
+    if (controlStream) {
+      controlStream.write(JSON.stringify(['statSubscribe', hostId]) + '\n');
+    }
+  };
+
+  data.getSta
   var thalassaDoc = null;
 
   var emitServicesChanged = _.debounce(function () { data.emit('services-changed') }, 400);
   var emitPoolsChanged = _.debounce(function () { data.emit('pools-changed') }, 400);
+  var emitStatsChanged = _.debounce(function () { data.emit('stats-changed') }, 400);
 
   function AqueductServer(meta) {
-    console.log('AqueductServer', meta)
     var id = meta.service.id;
     if (!(this instanceof AqueductServer)) {
       return aqueductServers[id] || new AqueductServer(meta);
@@ -49,37 +64,69 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
 
     this.frontendsSet = this.doc.createSet('_type', 'frontend');
     this.backendsSet  = this.doc.createSet('_type', 'backend');
-    this.statsSet     = this.doc.createSet('_type', 'stat');
+    //this.statsSet     = this.doc.createSet('_type', 'stat');
 
-    var frontends = {}, backends = {}, stats = {};
+    var frontends = {}, backends = {};
+
+    stats[id] = {};
 
     this.getFrontends = function getFrontends() { return frontends; };
     this.getBackends = function getBackends() { return backends; };
-    this.getStats = function getStats() { return stats; };
+    this.getStats = function getStats() { return stats[id]; };
 
     this.getFrontendStatus = function getFrontendStatus(frontendName) {
       var statId = 'stat/frontend/' + frontendName;
-      //console.log(statId, stats[statId]);
-      return stats[statId] || {};
+      var statArray = stats[id][statId];
+      if (!statArray || statArray.length === 0) return {};
+      return statArray.last() || {};
+    };
+
+    this.getFrontendConnectionStats = function getFrontendConnectionStats(frontendName) {
+      var statId = 'stat/frontend/' + frontendName;
+      var statArray = stats[id][statId];
+      if (!statArray || statArray.length === 0) return [];
+      return statArray.toArray().map(function(s) { return { x: Math.ceil(s.time/1000), y: parseInt(s.connections.current) }; });
     };
 
     this.getBackendStatus = function getBackendStatus(backendName) {
       var statId = 'stat/backend/' + backendName;
-      return stats[statId] || {};
+      var statArray = stats[id][statId];
+      if (!statArray || statArray.length === 0) return {};
+      return statArray.last() || {};
+    };
+
+    this.getBackendConnectionStats = function getBackendConnectionStats(backendName) {
+      var statId = 'stat/backend/' + backendName;
+      var statArray = stats[id][statId];
+      if (!statArray || statArray.length === 0) return [];
+      return statArray.toArray().map(function(s) { return { x: Math.ceil(s.time/1000), y: parseInt(s.connections.current) }; });
     };
 
     this.getBackendMemberStatus = function getBackendMemberStatus(backendName, host, port) {
       var statId = 'stat/backend/' + backendName + '/' + backendName + '_' + host + ':' + port;
-      return stats[statId] || {};
+      var statArray = stats[id][statId];
+      if (!statArray || statArray.length === 0) return {};
+      return statArray.last() || {};
     };
 
     this.getBackendMemberHealthCount = function getBackendMemberHealthCount(backendName) {
       var statIdPrefix = 'stat/backend/' + backendName +'/';
-      var count = Object.keys(stats)
-          .filter(function (key) { return key.indexOf(statIdPrefix) === 0;})
+      var statObj = stats[id];
+      var backend = backends['backend/'+backendName];
+      var memberHostPorts = backend.members.map(function (m) { return m.host + ':' + m.port; });
+      var count = Object.keys(statObj)
+          .filter(function (key) { 
+            var parts = key.split('/');
+            if (parts[3]) {
+              var hp = parts[3].split('_')[1];
+              return memberHostPorts.indexOf(hp) >= 0;
+            }
+            return false;
+          })
           .reduce(function (total, key) {
-            var state = stats[key];
-            return ((state.status.indexOf('UP') === 0) ? 1 : 0) + total;
+            var statArray  = statObj[key];
+            if (!statArray || statArray.length === 0) return total;
+            return ((statArray.last().status.indexOf('UP') === 0) ? 1 : 0) + total;
           } , 0);
       return count;
     };
@@ -108,17 +155,17 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       });
     });
 
-    this.statsSet.on('add', function (row) {
-      stats[row.id] = row.toJSON();
-    });
-    this.statsSet.on('remove', function (row) {
-      delete stats[row.id];
-    });
-    this.statsSet.on('changes', function (row, changes) {
-      Object.keys(changes).forEach(function (key) {
-        stats[row.id][key] = changes[key];
-      });
-    });
+    // this.statsSet.on('add', function (row) {
+    //   stats[row.id] = row.toJSON();
+    // });
+    // this.statsSet.on('remove', function (row) {
+    //   delete stats[row.id];
+    // });
+    // this.statsSet.on('changes', function (row, changes) {
+    //   Object.keys(changes).forEach(function (key) {
+    //     stats[row.id][key] = changes[key];
+    //   });
+    // });
 
     var handleServiceRemove = function handleServiceRemove (row) {
       var service = row.toJSON();
@@ -130,7 +177,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     this.destroy = function destroy() {
       this.frontendsSet.removeAllListeners();
       this.backendsSet.removeAllListeners();
-      this.statsSet.removeAllListeners();
+      //this.statsSet.removeAllListeners();
       this.doc.dispose();
       this.doc.removeAllListeners();
       data.removeListener('service-removed', handleServiceRemove);
@@ -236,6 +283,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   data.connection = new Connection(onConnect).connect();
 
   function onConnect (stream) {
+    var self = this;
     reinitialize();
 
     var mx = new MuxDemux(function (s) {
@@ -257,11 +305,33 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
         s.once('close', clientDocStream.destroy.bind(clientDocStream));
         stream.once('close', clientDocStream.destroy.bind(clientDocStream));
       }
+      else if (s.meta.type === 'stat') {
+        s.on('data', function (stat) {
+          var statObj = stats[stat.hostId] = stats[stat.hostId] || {};
+          var statArray = statObj[stat.id] = statObj[stat.id] || CBuffer(300);
+          statArray.push(stat);
+          emitStatsChanged();
+        });
+      }
+      else if (s.meta.type === 'control') {
+        controlStream = s;
+
+        // subscribe to any stat subscriptions
+        Object.keys(statSubscriptions).forEach(function(hostId) {
+          console.log('sending subscribe', hostId)
+          controlStream.write(JSON.stringify(['statSubscribe', hostId])+'\n');
+        })
+
+        s.pipe(split()).on('data', function (data) {
+          console.log(data);
+        });
+      }
     })
 
     stream.pipe(mx).pipe(stream);
     stream.once('close', function () {
       mx.destroy();
+      controlStream = null;
     })
   }
 

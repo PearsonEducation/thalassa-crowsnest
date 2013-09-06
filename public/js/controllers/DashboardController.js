@@ -3,10 +3,19 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
   function refreshFavorites () {
     $scope.favorites = _.toArray(dataStream.getPoolServers())
                         .filter(function (ps) { return $scope.isFavorite(ps)});
+    $scope.favorites.forEach(function (f) {
+      dataStream.subscribeToStats(f.id);
+    });
   }
 
   dataStream.on('pools-changed', function (row) {
+    console.log('POOLS')
     refreshFavorites();
+    $scope.$apply();
+  });
+
+  dataStream.on('stats-changed', function (row) {
+    console.log('STATS')
     $scope.$apply();
   });
 

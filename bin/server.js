@@ -27,6 +27,10 @@ var optimist = require('optimist')
                 default : 9000,
                 describe: 'port of the Thalassa server'
               },
+              dbPath: {
+                default : __dirname + '/db',
+                describe: 'filesystem path for leveldb'
+              },
               debug: {
                 boolean: true,
                 describe: 'enabled debug logging'

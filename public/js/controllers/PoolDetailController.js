@@ -7,6 +7,12 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
     $scope.$apply();
   });
 
+  dataStream.on('stats-changed', function (row) {
+    $scope.$apply();
+  });
+
+  dataStream.subscribeToStats(id);
+
   $scope.isFavorite = function (ps) {
     if (ps) return _.contains(userDataService.getFavorites(), ps.id);
   }
