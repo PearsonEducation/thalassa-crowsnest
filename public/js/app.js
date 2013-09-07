@@ -27,9 +27,9 @@ angular.module('crowsnest', ['LocalStorageModule'])
             element: element[0], 
             width: parseInt(attrs.width || 300),
             height: parseInt(attrs.height || 100),
-            min: -1,
+            renderer: 'line',
             series: [{
-                color: 'steelblue',
+                color: 'lightblue',
                 data: [{x: 0, y: 0}]
             }]
         });

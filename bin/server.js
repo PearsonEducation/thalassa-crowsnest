@@ -65,7 +65,7 @@ server.route({
 var sock = shoe();
 sock.install(server.listener, '/aqueductStreams');
 sock.on('connection', function (stream) {
-  var s = crowsnest.createReadableMuxStream();
+  var s = crowsnest.createMuxStream();
   stream.pipe(s).pipe(stream);
 
   stream.on('end', function () {

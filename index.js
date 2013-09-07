@@ -2,6 +2,7 @@ var assert = require('assert')
   , ThalassaAgent = require('./lib/ThalassaAgent')
   , Db = require('./lib/Db')
   , MuxDemux = require('mux-demux')
+  , through = require('through')
   , pkg = require('./package.json')
   , split = require('split')
   ;
@@ -9,6 +10,9 @@ var assert = require('assert')
 
 var Crowsnest = module.exports = function Crowsnest (opts) {
   var self = this;
+  if (typeof opts !== 'object') opts = {};
+  this.log = (typeof opts.log === 'function') ? opts.log : function (){};
+
   this.thalassa = new ThalassaAgent({
     host: opts.thalassaHost,
     port: opts.thalassaPort,
@@ -18,29 +22,46 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
 
   this.thalassa.client.register(pkg.name, pkg.version, opts.port);
 
+  //
+  // Stream stats into a leveldb
+  // TODO add optional statsd emitter
+  //
   this.db = new Db(opts);
   this.thalassa.on('stat', this.db.writeStat.bind(this.db));
 
-
-  // wire up
-  this.createReadableMuxStream = function () {
+  //
+  // Create a new MuxDemux stream for each browser client.
+  //
+  this.createMuxStream = function () {
     var mx = this.thalassa.createReadableMuxStream();
+
+    //
+    // Used to keep track of this clients stats subscriptions
+    //
     var statSubscriptions = {};
 
+    //
+    // wire up a control stream to receive messages from the client
+    //
     var controlStream = mx.createStream({ type: 'control' });
     controlStream.pipe(split()).on('data', function (line) {
       try {
         var msg = JSON.parse(line);
         if (msg[0] === 'statSubscribe') {
-          console.log(msg[0], msg[1])
           statSubscriptions[msg[1]] = true;
+          sendStatsForHostId(msg[1]);
         }
         else if (msg[0] === 'statUnsubscribe') {
           delete statSubscriptions[msg[1]];
         }
-      } catch(ex) { /* gulp */ };
+      } catch(err) {
+        self.log('error', 'error parsing controlStream message ' + line, String(err));
+      };
     });
 
+    //
+    // wire up a stats stream to send realtime aqueduct stats to the client
+    //
     var statStream = mx.createWriteStream({ type: 'stat' });
     var writeListener = function (stat) {
       if (statSubscriptions[stat.hostId]) {
@@ -49,8 +70,11 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
     };
     this.thalassa.on('stat', writeListener);
 
+    function sendStatsForHostId(hostId) {
+      self.db.statsValueStream(hostId).pipe(through(function write(data) { statStream.write(data); }));
+    }
+
     mx.on('end', function () {
-      console.log('mx end')
       self.thalassa.removeListener('stat', writeListener);
       statStream.destroy();
       controlStream.destroy();

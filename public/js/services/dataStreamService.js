@@ -308,7 +308,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       else if (s.meta.type === 'stat') {
         s.on('data', function (stat) {
           var statObj = stats[stat.hostId] = stats[stat.hostId] || {};
-          var statArray = statObj[stat.id] = statObj[stat.id] || CBuffer(300);
+          var statArray = statObj[stat.id] = statObj[stat.id] || CBuffer(150);
           statArray.push(stat);
           emitStatsChanged();
         });
