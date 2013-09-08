@@ -1,5 +1,12 @@
 angular.module('crowsnest').controller('DashboardController', function ($scope, $location, dataStream, userDataService) {
 
+  $scope.favorites = [];
+  $scope.frontends = {};
+  $scope.backends = {};
+  $scope.connStats = {};
+  $scope.statuses = {};
+  $scope.healthCounts = {};
+
   function refreshFavorites () {
     $scope.favorites = _.toArray(dataStream.getPoolServers())
                         .filter(function (ps) { return $scope.isFavorite(ps)});
@@ -8,15 +15,37 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
     });
   }
 
+  function refreshData() {
+    $scope.favorites.forEach(function (ps) {
+      $scope.frontends[ps.id] = ps.getFrontends();
+      $scope.backends[ps.id] = ps.getBackends();
+      $scope.connStats[ps.id] = {};
+      $scope.statuses[ps.id] = {};
+      for (k in $scope.frontends[ps.id]) {
+        var fe = $scope.frontends[ps.id][k];
+        $scope.connStats[ps.id][fe.id] = ps.getFrontendConnectionStats(fe.name);
+        $scope.statuses[ps.id][fe.id] = ps.getFrontendStatus(fe.name);
+      };
+      for (k in $scope.backends[ps.id]) {
+        var be = $scope.backends[ps.id][k];
+        $scope.connStats[ps.id][be.id] = ps.getBackendConnectionStats(be.name);
+        $scope.statuses[ps.id][be.id] = ps.getBackendStatus(be.name);
+        $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.name);
+      };
+    });
+  }
+
   dataStream.on('pools-changed', function (row) {
-    console.log('POOLS')
-    refreshFavorites();
-    $scope.$apply();
+    $scope.$apply(function () {
+      refreshFavorites();
+      refreshData();
+    });
   });
 
   dataStream.on('stats-changed', function (row) {
-    console.log('STATS')
-    $scope.$apply();
+    $scope.$apply(function () {
+      refreshData();
+    });
   });
 
   $scope.navigateToDetail = function (ps) {
@@ -31,6 +60,15 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
     if ($scope.isFavorite(ps)) userDataService.removeFavorite(ps.id);
     else userDataService.addFavorite(ps.id);
     refreshFavorites();
+  }
+
+  $scope.statusLabelClass = function (status) {
+    status = status.toLowerCase();
+    if (status.indexOf ('open') === 0) return 'success';
+    if (status.indexOf ('down') === 0) return 'danger';
+    if (status.indexOf ('up')   === 0) return 'success';
+    if (status.indexOf ('full') === 0) return 'danger';
+    return 'warning';
   }
 
   refreshFavorites();

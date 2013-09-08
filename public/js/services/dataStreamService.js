@@ -309,6 +309,9 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
         s.on('data', function (stat) {
           var statObj = stats[stat.hostId] = stats[stat.hostId] || {};
           var statArray = statObj[stat.id] = statObj[stat.id] || CBuffer(150);
+
+          // if the stat comes in out of order, just drop it
+          if (stat.time < (statArray.last() || {} ).time || 0) return;
           statArray.push(stat);
           emitStatsChanged();
         });

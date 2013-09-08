@@ -21,21 +21,45 @@ angular.module('crowsnest', ['LocalStorageModule'])
 
     return {
       restrict: 'E',
+      scope: { // attributes bound to the scope of the directive
+        data: '=data'
+      },
       link: function (scope, element, attrs) {
+        var width = parseInt(attrs.width || 300);
+        var height = parseInt(attrs.height || 100);
 
         var graph = new Rickshaw.Graph( {
             element: element[0], 
-            width: parseInt(attrs.width || 300),
-            height: parseInt(attrs.height || 100),
+            width: width,
+            height: height,
             renderer: 'line',
+            preserve: true,
+            stroke: true,
             series: [{
-                color: 'lightblue',
+                color: 'red',
                 data: [{x: 0, y: 0}]
             }]
         });
 
-        attrs.$observe('data', function(value) {
-          var data = JSON.parse(value);
+        var xAxis = new Rickshaw.Graph.Axis.Time( {
+          graph: graph,
+          ticksTreatment: 'glow'
+        } );
+
+        xAxis.render();
+
+        var yAxis = new Rickshaw.Graph.Axis.Y( {
+          graph: graph,
+          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+          ticksTreatment: 'glow',
+          pixelsPerTick: Math.ceil(height/2)
+        } );
+
+        yAxis.render();
+
+        scope.$watch('data', function (value, oldVal) {
+          if (!value) return;
+          var data = value; //JSON.parse(value);
           if (typeof data[0] === 'number') {
             var i = 0;
             data = data.map(function(y) { return { x: i++, y: y }; });

@@ -1,25 +1,43 @@
 <h2>Favorites</h2>
-<div class="well col-lg-6 favorites" ng-repeat="ps in favorites">
-    <h3><a href="#" ng-click="navigateToDetail(ps)">{{ps.meta.service.meta.hostname}}</a> {{ps.meta.service.host}}</h3>
-    <span ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></span>
-	<span>{{ps.id}}</span>
-	<div ng-repeat="(id, fe) in ps.getFrontends()">
-		Frontend {{fe.name}} [{{ps.getFrontendStatus(fe.name).status}}] {{fe.bind}} -> {{fe.backend}}<br/>
-		<time-series data="{{ps.getFrontendConnectionStats(fe.name)}}" width="300" height="50">
-			<div class="time-series-label">{{ps.getFrontendStatus(fe.name).connections.current}} connections ({{ps.getFrontendStatus(fe.name).connections.max}} max)</div>
-		</time-series>
-	</div>
-	<div ng-repeat="(id, be) in ps.getBackends()">
-		Backend {{be.name}} [{{ps.getBackendStatus(be.name).status}}]
-		<span ng-switch on="be.type">
-			<span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
-			<span ng-switch-when="static">static</span>
-		</span>
-		<br/>
-		<servers-donut total="{{be.members.length}}" healthy="{{ps.getBackendMemberHealthCount(be.name)}}"/>
-		<br/>
-		<time-series data="{{ps.getBackendConnectionStats(be.name)}}" width="300" height="50">
-			<div class="time-series-label">{{ps.getBackendStatus(be.name).connections.current}} connections ({{ps.getBackendStatus(be.name).connections.max}} max)</div>
-		</time-series>
-	</div>
+<div class="panel panel-default favorites" style="float:left" ng-repeat="ps in favorites">
+  <div class="panel-heading" style="position: relative">
+     <h3 class="panel-title"><a href="#" ng-click="navigateToDetail(ps)">{{ps.meta.service.meta.hostname}}</a></h3>
+    <span>{{ps.id}}</span>
+    <div ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></div>
+  </div>
+
+  <div class="panel-body">
+    <div class="frontends">
+      <div ng-repeat="fe in frontends[ps.id]">
+        Frontend {{fe.name}}
+        <span class="label label-{{statusLabelClass(statuses[ps.id][fe.id].status)}}">
+          {{statuses[ps.id][fe.id].status}}
+        </span><br/>
+        {{fe.bind}} -> {{fe.backend}}
+        <div style="position:relative;">
+          <div class="time-series-label">{{statuses[ps.id][fe.id].connections.current}} connections / {{statuses[ps.id][fe.id].connections.max}} max</div>
+          <time-series data="data = connStats[ps.id][fe.id]" width="200" height="80"></time-series>
+        </div>
+      </div>
+    </div>
+    <div class="backends">
+      <div ng-repeat="be in backends[ps.id]">
+        <div>
+          Backend {{be.name}}
+          <span class="label label-{{statusLabelClass(statuses[ps.id][be.id].status)}}">
+            {{statuses[ps.id][be.id].status}}
+          </span><br/>
+          <span ng-switch on="be.type">
+            <span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
+            <span ng-switch-when="static">static</span>
+          </span>
+        </div>
+        <div class="time-series-wrapper inline">
+          <span class="time-series-label">{{statuses[ps.id][be.id].connections.current}} connections / {{statuses[ps.id][be.id].connections.max}} max</span><br/>
+          <time-series data="connStats[ps.id][be.id]" width="200" height="80"></time-series>
+        </div>
+        <servers-donut class="inline" total="{{be.members.length}}" healthy="{{healthCounts[be.id]}}"></servers-donut>
+      </div>
+    </div>
+  </div>
 </div>
