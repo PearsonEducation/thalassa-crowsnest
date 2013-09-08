@@ -1,5 +1,5 @@
-<h2>Favorites</h2>
-<div class="panel panel-default favorites" style="float:left" ng-repeat="ps in favorites">
+<h2>Favorite Proxies</h2>
+<div class="panel panel-default favorites" ng-repeat="ps in favorites">
   <div class="panel-heading" style="position: relative">
      <h3 class="panel-title"><a href="#" ng-click="navigateToDetail(ps)">{{ps.meta.service.meta.hostname}}</a></h3>
     <span>{{ps.id}}</span>
@@ -8,11 +8,13 @@
 
   <div class="panel-body">
     <div class="frontends">
+      <h5>Frontends</h5>
       <div ng-repeat="fe in frontends[ps.id]">
-        Frontend {{fe.name}}
-        <span class="label label-{{statusLabelClass(statuses[ps.id][fe.id].status)}}">
-          {{statuses[ps.id][fe.id].status}}
-        </span><br/>
+        <h4>{{fe.name}}
+          <span class="label label-{{statusLabelClass(statuses[ps.id][fe.id].status)}}">
+            {{statuses[ps.id][fe.id].status}}
+          </span>
+        </h4>
         {{fe.bind}} -> {{fe.backend}}
         <div style="position:relative;">
           <div class="time-series-label">{{statuses[ps.id][fe.id].connections.current}} connections / {{statuses[ps.id][fe.id].connections.max}} max</div>
@@ -21,12 +23,14 @@
       </div>
     </div>
     <div class="backends">
+      <h5>Backends</h5>
       <div ng-repeat="be in backends[ps.id]">
         <div>
-          Backend {{be.name}}
-          <span class="label label-{{statusLabelClass(statuses[ps.id][be.id].status)}}">
-            {{statuses[ps.id][be.id].status}}
-          </span><br/>
+          <h4>{{be.name}}
+            <span class="label label-{{statusLabelClass(statuses[ps.id][be.id].status)}}">
+              {{statuses[ps.id][be.id].status}}
+            </span>
+          </h4>
           <span ng-switch on="be.type">
             <span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
             <span ng-switch-when="static">static</span>

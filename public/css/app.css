@@ -38,6 +38,8 @@
 	color: gray;
 }
 
+div.proxy-detail .favorite-true,
+div.proxy-detail .favorite-false,
 div.favorites .favorite-true,
 div.favorites .favorite-false {
 	position: absolute;
@@ -89,13 +91,23 @@ div.favorites .favorite-false {
 	position: relative;
 }
 
-.panel.favorites {
+.panel.favorites,
+.panel.proxy-detail {
 	margin-right: 15px;
+	float: left;
 }
 
+.panel.proxy-detail .panel-heading h3,
+.panel.proxy-detail .panel-heading span,
 .panel.favorites .panel-heading h3,
 .panel.favorites .panel-heading span {
 	padding-right:30px;
+}
+
+.panel.proxy-detail .frontends,
+.panel.proxy-detail .backends{
+	float: left;
+	padding-right: 20px;
 }
 
 .panel.favorites .frontends,

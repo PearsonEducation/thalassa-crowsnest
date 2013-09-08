@@ -2,12 +2,43 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
   var id = decodeURIComponent($routeParams.id);
   $scope.ps = dataStream.getPoolServer(id);
 
+  $scope.frontends = {};
+  $scope.backends = {};
+  $scope.connStats = {};
+  $scope.statuses = {};
+  $scope.healthCounts = {};
+
+  function refreshData() {
+    var ps = $scope.ps = dataStream.getPoolServer(id);
+    $scope.frontends = ps.getFrontends();
+    $scope.backends = ps.getBackends();
+    $scope.connStats = {};
+    $scope.statuses = {};
+    for (k in $scope.frontends) {
+      var fe = $scope.frontends[k];
+      $scope.connStats[fe.id] = ps.getFrontendConnectionStats(fe.name);
+      $scope.statuses[fe.id] = ps.getFrontendStatus(fe.name);
+    };
+    for (k in $scope.backends) {
+      var be = $scope.backends[k];
+      $scope.connStats[be.id] = ps.getBackendConnectionStats(be.name);
+      $scope.statuses[be.id] = ps.getBackendStatus(be.name);
+      $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.name);
+
+      be.members.forEach(function (member) {
+        $scope.statuses[member.id] = ps.getBackendMemberStatus(be.name, member.host, member.port);
+        //$scope.connStats[member.id] = ps.getBackendMemberConnectionStats(be.name, member.host, member.port);
+      });
+    };
+  }
+
   dataStream.on('pools-changed', function (row) {
-    $scope.ps = dataStream.getPoolServer(id);
+    refreshData()
     $scope.$apply();
   });
 
   dataStream.on('stats-changed', function (row) {
+    refreshData()
     $scope.$apply();
   });
 
@@ -21,5 +52,15 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
     if ($scope.isFavorite(ps)) userDataService.removeFavorite(ps.id);
     else userDataService.addFavorite(ps.id);
   }
+
+  $scope.statusLabelClass = function (status) {
+    status = status.toLowerCase();
+    if (status.indexOf ('open') === 0) return 'success';
+    if (status.indexOf ('down') === 0) return 'danger';
+    if (status.indexOf ('up')   === 0) return 'success';
+    if (status.indexOf ('full') === 0) return 'danger';
+    return 'warning';
+  }
+
 
 });

@@ -109,6 +109,13 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       return statArray.last() || {};
     };
 
+    // this.getBackendMemberConnectionStats = function getBackendMemberConnectionStats(backendName, host, port) {
+    //   var statId = 'stat/backend/' + backendName + '/' + backendName + '_' + host + ':' + port;
+    //   var statArray = stats[id][statId];
+    //   if (!statArray || statArray.length === 0) return [];
+    //   return statArray.toArray().map(function(s) { return { x: Math.ceil(s.time/1000), y: parseInt(s.connections.current) }; });
+    // };
+
     this.getBackendMemberHealthCount = function getBackendMemberHealthCount(backendName) {
       var statIdPrefix = 'stat/backend/' + backendName +'/';
       var statObj = stats[id];
