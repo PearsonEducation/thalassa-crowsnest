@@ -23,14 +23,14 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
       $scope.statuses[ps.id] = {};
       for (k in $scope.frontends[ps.id]) {
         var fe = $scope.frontends[ps.id][k];
-        $scope.connStats[ps.id][fe.id] = ps.getFrontendConnectionStats(fe.name);
-        $scope.statuses[ps.id][fe.id] = ps.getFrontendStatus(fe.name);
+        $scope.connStats[ps.id][fe.id] = ps.getFrontendConnectionStats(fe.key);
+        $scope.statuses[ps.id][fe.id] = ps.getFrontendStatus(fe.key);
       };
       for (k in $scope.backends[ps.id]) {
         var be = $scope.backends[ps.id][k];
-        $scope.connStats[ps.id][be.id] = ps.getBackendConnectionStats(be.name);
-        $scope.statuses[ps.id][be.id] = ps.getBackendStatus(be.name);
-        $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.name);
+        $scope.connStats[ps.id][be.id] = ps.getBackendConnectionStats(be.key);
+        $scope.statuses[ps.id][be.id] = ps.getBackendStatus(be.key);
+        $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.key);
       };
     });
   }
@@ -63,6 +63,7 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
   }
 
   $scope.statusLabelClass = function (status) {
+    if (!status) return '';
     status = status.toLowerCase();
     if (status.indexOf ('open') === 0) return 'success';
     if (status.indexOf ('down') === 0) return 'danger';

@@ -16,18 +16,18 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
     $scope.statuses = {};
     for (k in $scope.frontends) {
       var fe = $scope.frontends[k];
-      $scope.connStats[fe.id] = ps.getFrontendConnectionStats(fe.name);
-      $scope.statuses[fe.id] = ps.getFrontendStatus(fe.name);
+      $scope.connStats[fe.id] = ps.getFrontendConnectionStats(fe.key);
+      $scope.statuses[fe.id] = ps.getFrontendStatus(fe.key);
     };
     for (k in $scope.backends) {
       var be = $scope.backends[k];
-      $scope.connStats[be.id] = ps.getBackendConnectionStats(be.name);
-      $scope.statuses[be.id] = ps.getBackendStatus(be.name);
-      $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.name);
+      $scope.connStats[be.id] = ps.getBackendConnectionStats(be.key);
+      $scope.statuses[be.id] = ps.getBackendStatus(be.key);
+      $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.key);
 
       be.members.forEach(function (member) {
-        $scope.statuses[member.id] = ps.getBackendMemberStatus(be.name, member.host, member.port);
-        //$scope.connStats[member.id] = ps.getBackendMemberConnectionStats(be.name, member.host, member.port);
+        $scope.statuses[member.id] = ps.getBackendMemberStatus(be.key, member.host, member.port);
+        //$scope.connStats[member.id] = ps.getBackendMemberConnectionStats(be.key, member.host, member.port);
       });
     };
   }
@@ -54,6 +54,7 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
   }
 
   $scope.statusLabelClass = function (status) {
+    if (!status) return '';
     status = status.toLowerCase();
     if (status.indexOf ('open') === 0) return 'success';
     if (status.indexOf ('down') === 0) return 'danger';

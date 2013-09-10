@@ -74,52 +74,52 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     this.getBackends = function getBackends() { return backends; };
     this.getStats = function getStats() { return stats[id]; };
 
-    this.getFrontendStatus = function getFrontendStatus(frontendName) {
-      var statId = 'stat/frontend/' + frontendName;
+    this.getFrontendStatus = function getFrontendStatus(key) {
+      var statId = 'stat/frontend/' + key;
       var statArray = stats[id][statId];
       if (!statArray || statArray.length === 0) return {};
       return statArray.last() || {};
     };
 
-    this.getFrontendConnectionStats = function getFrontendConnectionStats(frontendName) {
-      var statId = 'stat/frontend/' + frontendName;
+    this.getFrontendConnectionStats = function getFrontendConnectionStats(key) {
+      var statId = 'stat/frontend/' + key;
       var statArray = stats[id][statId];
       if (!statArray || statArray.length === 0) return [];
       return statArray.toArray().map(function(s) { return { x: Math.ceil(s.time/1000), y: parseInt(s.connections.current) }; });
     };
 
-    this.getBackendStatus = function getBackendStatus(backendName) {
-      var statId = 'stat/backend/' + backendName;
+    this.getBackendStatus = function getBackendStatus(key) {
+      var statId = 'stat/backend/' + key;
       var statArray = stats[id][statId];
       if (!statArray || statArray.length === 0) return {};
       return statArray.last() || {};
     };
 
-    this.getBackendConnectionStats = function getBackendConnectionStats(backendName) {
-      var statId = 'stat/backend/' + backendName;
+    this.getBackendConnectionStats = function getBackendConnectionStats(key) {
+      var statId = 'stat/backend/' + key;
       var statArray = stats[id][statId];
       if (!statArray || statArray.length === 0) return [];
       return statArray.toArray().map(function(s) { return { x: Math.ceil(s.time/1000), y: parseInt(s.connections.current) }; });
     };
 
-    this.getBackendMemberStatus = function getBackendMemberStatus(backendName, host, port) {
-      var statId = 'stat/backend/' + backendName + '/' + backendName + '_' + host + ':' + port;
+    this.getBackendMemberStatus = function getBackendMemberStatus(key, host, port) {
+      var statId = 'stat/backend/' + key + '/' + key + '_' + host + ':' + port;
       var statArray = stats[id][statId];
       if (!statArray || statArray.length === 0) return {};
       return statArray.last() || {};
     };
 
-    // this.getBackendMemberConnectionStats = function getBackendMemberConnectionStats(backendName, host, port) {
-    //   var statId = 'stat/backend/' + backendName + '/' + backendName + '_' + host + ':' + port;
+    // this.getBackendMemberConnectionStats = function getBackendMemberConnectionStats(key, host, port) {
+    //   var statId = 'stat/backend/' + key + '/' + key + '_' + host + ':' + port;
     //   var statArray = stats[id][statId];
     //   if (!statArray || statArray.length === 0) return [];
     //   return statArray.toArray().map(function(s) { return { x: Math.ceil(s.time/1000), y: parseInt(s.connections.current) }; });
     // };
 
-    this.getBackendMemberHealthCount = function getBackendMemberHealthCount(backendName) {
-      var statIdPrefix = 'stat/backend/' + backendName +'/';
+    this.getBackendMemberHealthCount = function getBackendMemberHealthCount(key) {
+      var statIdPrefix = 'stat/backend/' + key +'/';
       var statObj = stats[id];
-      var backend = backends['backend/'+backendName];
+      var backend = backends['backend/'+key];
       var memberHostPorts = backend.members.map(function (m) { return m.host + ':' + m.port; });
       var count = Object.keys(statObj)
           .filter(function (key) { 
