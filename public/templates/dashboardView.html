@@ -14,6 +14,7 @@
           <span class="label label-{{statusLabelClass(statuses[ps.id][fe.id].status)}}">
             {{statuses[ps.id][fe.id].status}}
           </span>
+          <span>
         </h4>
         {{fe.bind}} -> {{fe.backend}}
         <div style="position:relative;">
@@ -32,7 +33,7 @@
             </span>
           </h4>
           <span ng-switch on="be.type">
-            <span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
+            <span ng-switch-when="dynamic">{{be.name}}@{{be.version}}</span>
             <span ng-switch-when="static">static</span>
           </span>
         </div>

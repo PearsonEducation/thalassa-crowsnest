@@ -122,16 +122,17 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       var backend = backends['backend/'+key];
       var memberHostPorts = backend.members.map(function (m) { return m.host + ':' + m.port; });
       var count = Object.keys(statObj)
-          .filter(function (key) { 
-            var parts = key.split('/');
+          .filter(function (statId) { 
+            if (statId.indexOf(statIdPrefix) !== 0) return false;
+            var parts = statId.split('/');
             if (parts[3]) {
               var hp = parts[3].split('_')[1];
               return memberHostPorts.indexOf(hp) >= 0;
             }
             return false;
           })
-          .reduce(function (total, key) {
-            var statArray  = statObj[key];
+          .reduce(function (total, statId) {
+            var statArray  = statObj[statId];
             if (!statArray || statArray.length === 0) return total;
             return ((statArray.last().status.indexOf('UP') === 0) ? 1 : 0) + total;
           } , 0);

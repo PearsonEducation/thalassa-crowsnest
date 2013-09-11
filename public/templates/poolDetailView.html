@@ -15,10 +15,20 @@
             {{statuses[fe.id].status}}
           </span>
         </h4>
-        Bind: {{fe.bind}}<br/>
-        Default backend: {{fe.backend}} <br/>
-        Rules: {{fe.rules}} <br/>
-        Natives: {{fe.natives}} <br/>
+        <ul class="list-unstyled">
+          <li>Bind: {{fe.bind}}</li>
+              <span class="glyphicon glyphicon-wrench"></span> 
+                <strong>default</strong> <span class="glyphicon glyphicon-arrow-right"></span> {{fe.backend}}<br/>
+          </li>
+          <li>
+            <span ng-repeat="rule in fe.rules">
+              <span class="glyphicon glyphicon-wrench"></span> 
+                <strong>{{rule.type}}</strong>: {{rule.operation}} {{rule.header || ""}} "{{rule.value}}" 
+                <span class="glyphicon glyphicon-arrow-right"></span> {{rule.backend}}<br/>
+            </span>
+          </li>
+          <li>Natives: {{fe.natives}}</li>
+        </ul>
 
         <div class="time-series-wrapper">
           <div class="time-series-label">{{statuses[fe.id].connections.current}} connections / {{statuses[fe.id].connections.max}} max</div>
@@ -36,7 +46,7 @@
             </span>
           </h4>
           <span ng-switch on="be.type">
-            <span ng-switch-when="spindrift">{{be.role}}@{{be.version}}</span>
+            <span ng-switch-when="dynamic">{{be.name}}@{{be.version}}</span>
             <span ng-switch-when="static">static</span>
           </span>
         </div>
@@ -51,7 +61,7 @@
           <div class="well">
             <div ng-repeat="member in be.members">
               {{member.host}}:{{member.port}} 
-              <span class="label label-{{statusLabelClass(statuses[member.id].status)}}">
+              <span class="label label-{{statusLabelClass(statuses[member.id].status)}}" style="float: right">
                 {{statuses[member.id].status}}
               </span>
             </div>
