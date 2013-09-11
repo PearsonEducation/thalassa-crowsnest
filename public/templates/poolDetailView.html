@@ -10,7 +10,7 @@
     <div class="frontends">
       <h5>Frontends</h5>
       <div ng-repeat="fe in frontends">
-        <h4>{{fe.name}}
+        <h4>{{fe.key}}
           <span class="label label-{{statusLabelClass(statuses[fe.id].status)}}">
             {{statuses[fe.id].status}}
           </span>
@@ -30,7 +30,7 @@
       <h5>Backends</h5>
       <div ng-repeat="be in backends">
         <div>
-          <h4>{{be.name}}
+          <h4>{{be.key}}
             <span class="label label-{{statusLabelClass(statuses[be.id].status)}}">
               {{statuses[be.id].status}}
             </span>
