@@ -48,6 +48,7 @@
     "CBuffer": "~0.1.4",
     "debounce": "0.0.3",
     "mkdirp": "~0.3.5",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "request": "~2.27.0"
   }
 }

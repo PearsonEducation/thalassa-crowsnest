@@ -6,6 +6,7 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
   $scope.connStats = {};
   $scope.statuses = {};
   $scope.healthCounts = {};
+  $scope.versionMap = {};
 
   function refreshFavorites () {
     $scope.favorites = _.toArray(dataStream.getPoolServers())
@@ -15,12 +16,14 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
     });
   }
 
+  // TODO severly optimize this mess
   function refreshData() {
     $scope.favorites.forEach(function (ps) {
       $scope.frontends[ps.id] = ps.getFrontends();
       $scope.backends[ps.id] = ps.getBackends();
       $scope.connStats[ps.id] = {};
       $scope.statuses[ps.id] = {};
+      $scope.versionMap[ps.id] = {};
       for (k in $scope.frontends[ps.id]) {
         var fe = $scope.frontends[ps.id][k];
         $scope.connStats[ps.id][fe.id] = ps.getFrontendConnectionStats(fe.key);
@@ -31,6 +34,9 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
         $scope.connStats[ps.id][be.id] = ps.getBackendConnectionStats(be.key);
         $scope.statuses[ps.id][be.id] = ps.getBackendStatus(be.key);
         $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.key);
+        $scope.versionMap[ps.id][be.id] = dataStream.getServices()
+          .filter(function (s) { return (s.name === be.name)})
+          .reduce(function (p, c) { p[c.version] = (p[c.version] || 0) + 1; return p; }, {});
       };
     });
   }
@@ -70,6 +76,11 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
     if (status.indexOf ('up')   === 0) return 'success';
     if (status.indexOf ('full') === 0) return 'danger';
     return 'warning';
+  }
+
+  $scope.changeVersion = function (ps, be, version) {
+    console.log('change version of ', be.id, version);
+    ps.setBackendVersion(be.key, version);
   }
 
   refreshFavorites();

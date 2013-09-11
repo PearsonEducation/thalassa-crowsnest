@@ -43,7 +43,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     }
   };
 
-  data.getSta
   var thalassaDoc = null;
 
   var emitServicesChanged = _.debounce(function () { data.emit('services-changed') }, 400);
@@ -108,6 +107,12 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       if (!statArray || statArray.length === 0) return {};
       return statArray.last() || {};
     };
+
+    this.setBackendVersion = function setBackendVersion (key, version) {
+      if (controlStream) {
+        controlStream.write(JSON.stringify(['updateAqueductBackendVersion', id, key, version]) + '\n');
+      }
+    }
 
     // this.getBackendMemberConnectionStats = function getBackendMemberConnectionStats(key, host, port) {
     //   var statId = 'stat/backend/' + key + '/' + key + '_' + host + ':' + port;

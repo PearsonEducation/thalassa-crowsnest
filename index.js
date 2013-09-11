@@ -1,6 +1,7 @@
 var assert = require('assert')
   , ThalassaAgent = require('./lib/ThalassaAgent')
   , Db = require('./lib/Db')
+  , aqueductClient = require('./lib/aqueductClient')
   , MuxDemux = require('mux-demux')
   , through = require('through')
   , pkg = require('./package.json')
@@ -53,6 +54,14 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
         }
         else if (msg[0] === 'statUnsubscribe') {
           delete statSubscriptions[msg[1]];
+        }
+        else if (msg[0] === 'updateAqueductBackendVersion') {
+          console.log(msg);
+          var p = msg[1].split('/');
+          var host = p[3], port = p[4], key = msg[2], version = msg[3];
+          aqueductClient.setVersion(host, port, key, version, function (err) {
+            if (err)  self.log('error', 'setting aqueduct version ' + msg, String(err));
+          })
         }
       } catch(err) {
         self.log('error', 'error parsing controlStream message ' + line, String(err));
