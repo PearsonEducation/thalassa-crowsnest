@@ -7,6 +7,7 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
   $scope.connStats = {};
   $scope.statuses = {};
   $scope.healthCounts = {};
+  $scope.versionMap = {};
 
   function refreshData() {
     var ps = $scope.ps = dataStream.getPoolServer(id);
@@ -14,6 +15,7 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
     $scope.backends = ps.getBackends();
     $scope.connStats = {};
     $scope.statuses = {};
+    $scope.versionMap = {};
     for (k in $scope.frontends) {
       var fe = $scope.frontends[k];
       $scope.connStats[fe.id] = ps.getFrontendConnectionStats(fe.key);
@@ -27,6 +29,10 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
 
       be.members.forEach(function (member) {
         $scope.statuses[member.id] = ps.getBackendMemberStatus(be.key, member.host, member.port);
+        $scope.versionMap[be.id] = dataStream.getServices()
+          .filter(function (s) { return (s.name === be.name)})
+          .reduce(function (p, c) { p[c.version] = (p[c.version] || 0) + 1; return p; }, {});
+
         //$scope.connStats[member.id] = ps.getBackendMemberConnectionStats(be.key, member.host, member.port);
       });
     };
@@ -63,5 +69,9 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
     return 'warning';
   }
 
+  $scope.changeVersion = function (be, version) {
+    console.log('change version of ', be.id, version);
+    $scope.ps.setBackendVersion(be.key, version);
+  }
 
 });

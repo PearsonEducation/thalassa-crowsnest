@@ -116,9 +116,14 @@ div.favorites .favorite-false {
 	padding-right: 10px;
 }
 
+.panel-heading a {
+	color: #428bca;
+}
+
 .inline {
 	display: inline;
 }
+
 
 
 

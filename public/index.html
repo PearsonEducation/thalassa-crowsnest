@@ -36,12 +36,13 @@
     <div class="container">
       <connection-status class="pull-left"></connection-status>
       <a href="/" class="navbar-brand">Thalassa Crowsnest</a>
-      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <div class="nav-collapse bs-navbar-collapse collapse" style="height: 0px;">
+      <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
         <ul class="nav navbar-nav">
           <li ng-class="{active: $route.current.active == 'dashboard'}">
             <a href="/">Favorites</a>
@@ -56,7 +57,7 @@
             <a href="/activity">Activity</a>
           </li>
         </ul>
-      </div>
+      </nav>
     </div>
   </div>
   <div id ="view-container" class="container" ng-view>
