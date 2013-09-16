@@ -16,10 +16,8 @@
           </span>
           <span>
         </h4>
-        {{fe.bind}} -> {{fe.backend}}
         <div style="position:relative;">
-          <div class="time-series-label">{{statuses[ps.id][fe.id].connections.current}} connections / {{statuses[ps.id][fe.id].connections.max}} max</div>
-          <time-series data="data = connStats[ps.id][fe.id]" width="200" height="80"></time-series>
+          <time-series data="data = connStats[ps.id][fe.id]" width="200" height="30" type="area"></time-series>
         </div>
       </div>
     </div>
@@ -38,8 +36,7 @@
           </span>
         </div>
         <div class="time-series-wrapper inline">
-          <span class="time-series-label">{{statuses[ps.id][be.id].connections.current}} connections / {{statuses[ps.id][be.id].connections.max}} max</span><br/>
-          <time-series data="connStats[ps.id][be.id]" width="200" height="80"></time-series>
+          <time-series data="connStats[ps.id][be.id]" width="200" height="30" type="area"></time-series>
         </div>
         <servers-donut class="inline" total="{{be.members.length}}" healthy="{{healthCounts[be.id]}}"></servers-donut>
       </div>

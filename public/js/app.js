@@ -27,35 +27,40 @@ angular.module('crowsnest', ['LocalStorageModule'])
       link: function (scope, element, attrs) {
         var width = parseInt(attrs.width || 300);
         var height = parseInt(attrs.height || 100);
+        var color = attrs.color || 'steelblue';
+        var type = attrs.type || 'line';
+        var axis = (attrs.axis) ? true : false;
 
         var graph = new Rickshaw.Graph( {
             element: element[0], 
             width: width,
             height: height,
-            renderer: 'line',
+            renderer: type,
             preserve: true,
             stroke: true,
             series: [{
-                color: 'red',
+                color: color,
                 data: [{x: 0, y: 0}]
             }]
         });
 
-        var xAxis = new Rickshaw.Graph.Axis.Time( {
-          graph: graph,
-          ticksTreatment: 'glow'
-        } );
+        if (axis) {
+          var xAxis = new Rickshaw.Graph.Axis.Time( {
+            graph: graph,
+            ticksTreatment: 'glow'
+          } );
 
-        xAxis.render();
+          xAxis.render();
 
-        var yAxis = new Rickshaw.Graph.Axis.Y( {
-          graph: graph,
-          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-          ticksTreatment: 'glow',
-          pixelsPerTick: Math.ceil(height/2)
-        } );
+          var yAxis = new Rickshaw.Graph.Axis.Y( {
+            graph: graph,
+            tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+            ticksTreatment: 'glow',
+            pixelsPerTick: Math.ceil(height/2)
+          } );
 
-        yAxis.render();
+          yAxis.render();
+        }
 
         scope.$watch('data', function (value, oldVal) {
           if (!value) return;
