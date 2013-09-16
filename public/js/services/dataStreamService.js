@@ -91,7 +91,12 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       var statId = 'stat/backend/' + key;
       var statArray = stats[id][statId];
       if (!statArray || statArray.length === 0) return {};
-      return statArray.last() || {};
+      var last = statArray.last() || {};
+
+      // Correct an edge base where there are not backend members and 
+      // HAProxy considers the backend to be healthy
+      if (this.getBackendMemberHealthCount(key) === 0) last.status = 'DOWN';
+      return  last;
     };
 
     this.getBackendConnectionStats = function getBackendConnectionStats(key) {
