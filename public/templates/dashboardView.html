@@ -1,45 +1,55 @@
 <h2>Favorite Proxies</h2>
-<div class="panel panel-default favorites" ng-repeat="ps in favorites">
-  <div class="panel-heading" style="position: relative">
-     <h3 class="panel-title"><a href="#" ng-click="navigateToDetail(ps)">{{ps.meta.service.meta.hostname}}</a></h3>
-    <span>{{ps.id}}</span>
-    <div ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></div>
-  </div>
+<div class="favorites" ng-repeat="ps in favorites">
+  
+  <div class="favorites-entry">
+    <div class="entry">
+      <table class="dashboard table">
+        <tr>
+          <th colspan="3">
+            <h2><a href="#" ng-click="navigateToDetail(ps)">{{ps.meta.service.meta.hostname}}</a></h2>
+            <div class="id">{{ps.id}}</div>
+            <div ng-click="toggleFavorite(ps)" class="favorite-icon glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></span>
+          </th>
+        </tr>
+        <tr ng-repeat="fe in frontends[ps.id]">
+          <td>
+            <div class="name">{{fe.key}}</div>
+            <div class="status label-{{statusLabelClass(statuses[ps.id][fe.id].status)}}">Frontends &nbsp;&#149;&nbsp; {{statuses[ps.id][fe.id].status}}</div>
+          </td>
+          <td>
+            <div class="big-block">
+              <div class="big-number">{{statuses[ps.id][fe.id].connections.current}}</div>
+              <div class="big-number-label">Connections</div>
+            </div>
+            <div class="little-graph">
+              <time-series data="data = connStats[ps.id][fe.id]" width="100" height="55" type="area"></time-series>
+            </div>
+          </td>
+          <td>
+            &nbsp;
+          </td>
+        </tr>
+        <tr ng-repeat="be in backends[ps.id]">
+          <td>
+            <div class="name">{{be.key}}</div>
+            <div class="status label-{{statusLabelClass(statuses[ps.id][be.id].status)}}">Backends &nbsp;&#149;&nbsp; {{statuses[ps.id][be.id].status}}</div>
+          </td>
+          <td>
+            <div class="big-block">
+              <div class="big-number">{{statuses[ps.id][be.id].connections.current}}</div>
+              <div class="big-number-label">Connections</div>
+            </div>
+            <div class="little-graph">
+              <time-series data="data = connStats[ps.id][be.id]" width="100" height="55" type="area"></time-series>
+            </div>
+          </td>
+          <td>
+            <div class="big-number">{{healthCounts[be.id]}} / {{be.members.length}}</div>
+            <div class="big-number-label">Servers</div>
+          </td>
+        </tr>
+      </table>
+    </div>
 
-  <div class="panel-body">
-    <div class="frontends">
-      <h5>Frontends</h5>
-      <div ng-repeat="fe in frontends[ps.id]">
-        <h4>{{fe.key}}
-          <span class="label label-{{statusLabelClass(statuses[ps.id][fe.id].status)}}">
-            {{statuses[ps.id][fe.id].status}}
-          </span>
-          <span>
-        </h4>
-        <div style="position:relative;">
-          <time-series data="data = connStats[ps.id][fe.id]" width="200" height="30" type="area"></time-series>
-        </div>
-      </div>
-    </div>
-    <div class="backends">
-      <h5>Backends</h5>
-      <div ng-repeat="be in backends[ps.id]">
-        <div>
-          <h4>{{be.key}}
-            <span class="label label-{{statusLabelClass(statuses[ps.id][be.id].status)}}">
-              {{statuses[ps.id][be.id].status}}
-            </span>
-          </h4>
-          <span ng-switch on="be.type">
-            <span ng-switch-when="dynamic">{{be.name}}@{{be.version}}</span>
-            <span ng-switch-when="static">static</span>
-          </span>
-        </div>
-        <div class="time-series-wrapper inline">
-          <time-series data="connStats[ps.id][be.id]" width="200" height="30" type="area"></time-series>
-        </div>
-        <servers-donut class="inline" total="{{be.members.length}}" healthy="{{healthCounts[be.id]}}"></servers-donut>
-      </div>
-    </div>
   </div>
 </div>

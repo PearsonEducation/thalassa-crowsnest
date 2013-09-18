@@ -1,3 +1,71 @@
+/********************************** BEGIN TEMP CSS */
+
+table.dashboard td,
+table.dashboard th {
+	text-align: center;
+}
+
+table.dashboard th {
+}
+
+table.dashboard th h2 {
+	font-size: 30px;
+	font-weight: 200;
+	margin: 0;
+	padding-bottom: 5px;
+}
+
+table.dashboard th .id {
+	font-size: 18px;
+	font-weight: 500;
+}
+
+table.dashboard th .favorite-icon {
+	position: relative;
+	float: right;
+	margin-right: 10px;
+	margin-top: -45px;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+table.dashboard .name {
+	font-size: 24px;
+	font-weight: 200;
+}
+
+table.dashboard .status {
+	font-size: 14px;
+	display: inline-block;
+	width: 160px;
+	padding: 4px 10px;
+	color: #fff;
+}
+
+table.dashboard .little-graph {
+	display: inline-block;
+}
+
+table.dashboard .big-block {
+	display: inline-block;
+	min-width: 130px;
+}
+
+table.dashboard .big-number {
+	line-height: 110%;
+	font-size: 40px;
+	font-weight: 100;
+}
+
+table.dashboard .big-number-label {
+	font-size: 14px;
+	font-weight: 400;
+	color: #333;
+}
+
+/********************************** END TEMP CSS */
+
+
 #view-container {
 	margin-top: 80px;
 }
