@@ -1,8 +1,8 @@
 <h2>Pools</h2>
 <ul class="list-group proxy-list">
 <li class=" list-group-item" ng-repeat="(id, ps) in poolServers">
-     <span ng-click="toggleFavorite(ps)" class="glyphicon glyphicon-heart favorite-{{isFavorite(ps)}}"></span>
      <a href="#" ng-click="navigateToDetail(ps)">{{ps.meta.service.meta.hostname}}</a>
      <span>{{ps.meta.service.host}}</span>
+     <span ng-click="toggleFavorite(ps)" class="pull-right glyphicon glyphicon-plus favorite-{{isFavorite(ps)}}"></span>
 </li>
 </ul>
