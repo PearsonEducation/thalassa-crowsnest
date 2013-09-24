@@ -61,11 +61,11 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
           var host = p[3], port = p[4], key = msg[2], version = msg[3];
           aqueductClient.setVersion(host, port, key, version, function (err) {
             if (err)  self.log('error', 'setting aqueduct version ' + msg, String(err));
-          })
+          });
         }
       } catch(err) {
         self.log('error', 'error parsing controlStream message ' + line, String(err));
-      };
+      }
     });
 
     //
@@ -90,7 +90,7 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
     });
 
     return mx;
-  }
-}
+  };
+};
 
 

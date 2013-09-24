@@ -14,7 +14,7 @@ angular.module('crowsnest', ['LocalStorageModule'])
       restrict: 'E',
       controller: 'ConnectionController',
       templateUrl: '/templates/connection.html'
-    }
+    };
   })
 
   .directive('timeSeries', function () {
@@ -25,8 +25,8 @@ angular.module('crowsnest', ['LocalStorageModule'])
         data: '=data'
       },
       link: function (scope, element, attrs) {
-        var width = parseInt(attrs.width || 300);
-        var height = parseInt(attrs.height || 100);
+        var width = parseInt(attrs.width || 300, 10);
+        var height = parseInt(attrs.height || 100, 10);
         var color = attrs.color || 'steelblue';
         var type = attrs.type || 'line';
         var axis = (attrs.axis) ? true : false;
@@ -103,7 +103,7 @@ angular.module('crowsnest', ['LocalStorageModule'])
             .attr("width", width)
             .attr("height", height)
             .append("g")
-            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
         // DRAW BACKGROUND ARC
         var background = svg.append("path")
@@ -126,18 +126,18 @@ angular.module('crowsnest', ['LocalStorageModule'])
             .style("font-weight", "400")
             .text(0 + "/" + 0);
 
-        var total = parseInt(attrs.total) || 0, 
-            healthy = parseInt(attrs.healthy) || 0,
+        var total = parseInt(attrs.total, 10) || 0, 
+            healthy = parseInt(attrs.healthy, 10) || 0,
             angleToDraw = 0;
 
         attrs.$observe('total', function(value) {
-          total = parseInt(value);
+          total = parseInt(value, 10);
           reDraw();
-        })
+        });
         attrs.$observe('healthy', function(value) {
-          healthy = parseInt(value);
+          healthy = parseInt(value, 10);
           reDraw();
-        })
+        });
 
         // CHECK THE DATA AND DO STUFF IF ITS CHANGED
         function reDraw() {
@@ -146,9 +146,9 @@ angular.module('crowsnest', ['LocalStorageModule'])
           // CHANGE THE COLOR OF THE DONUT
           var ratio = (total !== 0) ? healthy / total : 0;
 
-          if (ratio >= .7) {
+          if (ratio >= 0.7) {
             donutColor = "#2CCE10"; // GREEN
-          } else if (ratio < .7 && ratio > .4) {
+          } else if (ratio < 0.7 && ratio > 0.4) {
             donutColor = "#E7BE23"; // YELLOW
           } else {
             donutColor = "#F83E32"; // RED
@@ -236,7 +236,7 @@ angular.module('crowsnest', ['LocalStorageModule'])
              .enter()
              .append("rect")
              .attr("x", function(d, i) {
-                return i * (width / data.length - .5); // .5 sharpens the bars on pixels
+                return i * (width / data.length - 0.5); // .5 sharpens the bars on pixels
               })
              .attr("y", height - 1)
              .attr("width", width / data.length - barPadding)
@@ -249,12 +249,12 @@ angular.module('crowsnest', ['LocalStorageModule'])
             // .transition()
             // .duration(1000)
             .attr("x", function(d, i) {
-                return i * (width / data.length - .5); // .5 sharpens the bars on pixels
+                return i * (width / data.length - 0.5); // .5 sharpens the bars on pixels
               })
             .attr("y", function(datum) { return height - y(datum); })
             .attr("width", width / data.length - barPadding)
             .attr("height", function(datum) { return y(datum); });
-          };
+          }
 
           animateInitial();
 
@@ -283,5 +283,5 @@ angular.module('crowsnest', ['LocalStorageModule'])
               .text("Connections " + data[data.length - 1]);
         });
       }
-    }
+    };
 });

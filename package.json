@@ -4,7 +4,7 @@
   "description": "A vantage point for Thalassa",
   "main": "index.js",
   "scripts": {
-    "test": "jshint *.js lib/*.js test/*.js public/js/*.js --config .jshintrc && mocha test/test*",
+    "test": "jshint *.js lib/*.js public/js/*.js --config .jshintrc && echo Sadly no tests yet",
     "start": "browserify public/js/services/browserifyService.js -o public/js/browserifyServiceBundle.js && ./bin/server.js --debug",
     "postinstall": "browserify public/js/services/browserifyService.js -o public/js/browserifyServiceBundle.js"
   },
@@ -19,13 +19,11 @@
     "thalassa",
     "haproxy",
     "loadbalancer",
-    "proxy",
-    "seaport"
+    "proxy"
   ],
   "author": "Mike Brevoort <mike.brevoort@pearson.com>",
-  "license": "TBD",
+  "license": "Apache2",
   "readmeFilename": "README.md",
-  "gitHead": "b2733f07bbd12ad87f9714639b48e912c6301b4a",
   "bugs": {
     "url": "https://github.com/PearsonEducation/thalassa-crowsnest/issues"
   },
@@ -33,22 +31,22 @@
     "mocha": "~1.12.0"
   },
   "dependencies": {
-    "optimist": "~0.6.0",
-    "shoe": "~0.0.11",
-    "cli-color": "~0.2.2",
-    "hapi": "~1.9.0",
-    "thalassa": "git+ssh://git@github.com:PearsonEducation/thalassa.git",
     "browserify": "~2.25.1",
-    "websocket-stream": "~0.2.0",
-    "mux-demux": "~3.7.8",
-    "crdt": "~3.5.2",
-    "ws": "0.4.27",
-    "level": "~0.15.0",
-    "split": "~0.2.10",
     "CBuffer": "~0.1.4",
+    "cli-color": "~0.2.2",
+    "crdt": "~3.5.2",
     "debounce": "0.0.3",
+    "hapi": "~1.9.0",
+    "level": "~0.15.0",
     "mkdirp": "~0.3.5",
+    "mux-demux": "~3.7.8",
+    "optimist": "~0.6.0",
+    "request": "~2.27.0",
+    "shoe": "~0.0.11",
+    "split": "~0.2.10",
+    "thalassa": "~0.3.2",
     "through": "~2.3.4",
-    "request": "~2.27.0"
+    "websocket-stream": "~0.2.0",
+    "ws": "0.4.27"
   }
 }
