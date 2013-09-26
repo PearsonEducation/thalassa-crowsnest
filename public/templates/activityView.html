@@ -1,4 +1,3 @@
-<h2>Activity</h2>
 <input placeholder="Type to filter" ng-model="filterText" class="ng-pristine ng-valid">
 <ul class="activity-list">
 	<li ng-repeat="ev in activity | filter:filterText | orderBy:'time':true">

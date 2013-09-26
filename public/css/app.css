@@ -1,27 +1,54 @@
 /********************************** BEGIN TEMP CSS */
 
+.entry {
+	float: left;
+	min-width: 560px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	border: 4px solid #eee;
+	clear: left;
+}
+
+.entry:nth-child(even) {
+	margin-right: 0;
+	clear: none;
+}
+
+@media (max-width: 1200px) {
+  .entry {
+  	width: 100%;
+    min-width: 600px;
+    max-width: 1000px;
+  }
+}
 
 table.dashboard > tbody >  tr.success > td {
 	background: #fff;
 }
 
-table.dashboard td,
+
 table.dashboard th {
+	text-align: left;
+	background: #eee;
+}
+
+table.dashboard td {
 	text-align: center;
 }
 
-table.dashboard th {
+table.dashboard tbody>tr>th {
+	border: none;
 }
 
 table.dashboard th h2 {
-	font-size: 30px;
+	font-size: 24px;
 	font-weight: 200;
 	margin: 0;
 	padding-bottom: 5px;
 }
 
 table.dashboard th .id {
-	font-size: 18px;
+	font-size: 14px;
 	font-weight: 500;
 }
 
@@ -39,33 +66,39 @@ table.dashboard td.status-label div {
     margin-left: -9px;
     padding: 5px;
     color: #fff;
-    font-weight: bold;
+    font-weight: 200;
 }
 
 table.dashboard .name {
-	font-size: 24px;
+	font-size: 20px;
 	font-weight: 500;
 }
 
 table.dashboard .little-graph {
 	display: inline-block;
+	vertical-align: middle;
 }
 
 table.dashboard .big-block {
 	display: inline-block;
+	vertical-align: middle;
 	min-width: 130px;
 }
 
 table.dashboard .big-number {
 	line-height: 110%;
-	font-size: 40px;
+	font-size: 34px;
 	font-weight: 100;
 }
 
 table.dashboard .big-number-label {
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 400;
 	color: #333;
+}
+
+table.dashboard td.servers {
+	padding-top: 13px;
 }
 
 .favorite-true {
@@ -77,6 +110,117 @@ table.dashboard .big-number-label {
 
 .favorite-false {
 	color: #999 !important;
+}
+
+
+
+.pool-detail {
+	width: 100%;
+	margin-top: -30px;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	background: #eee;
+}
+
+.pool-detail .pool-heading {
+	background: #eee;
+	padding: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.pool-detail .pool-heading h2 {
+	margin: 0;
+	font-size: 35px;
+	font-weight: 200;
+}
+
+.pool-detail .pool-heading span {
+	font-size: 16px;
+	font-weight: 200;
+	color: #333;	
+}
+
+.pool-detail .frontends {
+	float: left;	
+	width: 50%;
+	background: #fff;
+	border-left: none;
+}
+.pool-detail .backends {
+	float: left;	
+	width: 50%;
+	background: #fff;
+	border-left: 1px solid #ccc;
+}
+
+.pool-detail h3 {
+	display: block;	
+	margin: 0;
+	padding: 20px;
+	background: #ddd;
+	font-size: 20px;
+	background: #ebf5fc;
+	border-bottom: 1px solid #ccc;	
+}
+
+.pool-detail .pool-info {
+	padding-bottom: 20px;
+	border-bottom: 1px solid #ccc;
+}
+
+.pool-detail .pool-info .status-label {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 20px;
+  padding: 10px;
+	font-size: 24px;
+	font-weight: 100 !important;
+	letter-spacing: 1px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.pool-detail .pool-info h4 {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0;
+	font-size: 24px;
+	font-weight: 800;
+	max-width: 380px;
+	white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pool-detail .pool-info .version {
+	display: inline-block;
+	margin: 15px 15px 0 0;
+}
+
+.pool-detail .pool-info .time-series-wrapper {
+	margin: 20px 10px 10px 10px;
+}
+
+.pool-detail .pool-info .donut {
+	margin-left: 5px;
+}
+
+.pool-detail .pool-info h5 {
+	font-weight: 800;
+}
+
+.pool-detail .pool-info ul,
+.pool-detail .pool-info .members {
+	padding: 0 10px;
+}
+
+.pool-detail .pool-info .members > div {
+	padding: 5px 0;
+	border-top: 1px solid #ddd;
+}
+
+.pool-detail .pool-info .members > div:last-child {
+	border-bottom: 1px solid #ddd;
 }
 
 /********************************** END TEMP CSS */
