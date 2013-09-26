@@ -32,7 +32,7 @@
 
         <div class="time-series-wrapper">
           <div class="time-series-label">{{statuses[fe.id].connections.current}} connections / {{statuses[fe.id].connections.max}} max</div>
-          <time-series data="data = connStats[fe.id]" width="300" height="80" axis="true"></time-series>
+          <time-series data="data = connStats[fe.id]" width="300" height="80" axis="true" type="area"></time-series>
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
         </div>
         <div class="time-series-wrapper inline">
           <span class="time-series-label">{{statuses[be.id].connections.current}} connections / {{statuses[be.id].connections.max}} max</span><br/>
-          <time-series data="connStats[be.id]" width="300" height="80" axis="true"></time-series>
+          <time-series data="connStats[be.id]" width="300" height="80" axis="true" type="area"></time-series>
         </div>
         <servers-donut class="inline" total="{{be.members.length}}" healthy="{{healthCounts[be.id]}}"></servers-donut>
 
