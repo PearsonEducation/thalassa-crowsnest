@@ -17,19 +17,23 @@
         <time-series data="data = connStats[fe.id]" width="550" height="80" axis="true" type="area"></time-series>
       </div>
       <ul class="list-unstyled">
-        <li>Bind: {{fe.bind}}</li>
+        <li><div class="icon-headphones"></div> <strong>bind:</strong> {{fe.bind}}</li>
         <li>
-          <span class="glyphicon glyphicon-wrench"></span> 
+          <div class="icon-wrench"></div> 
           <strong>default</strong> <span class="glyphicon glyphicon-arrow-right"></span> {{fe.backend}}<br/>
         </li>
         <li>
           <span ng-repeat="rule in fe.rules">
-            <span class="glyphicon glyphicon-wrench"></span> 
+            <div class="icon-wrench"></div> 
             <strong>{{rule.type}}</strong>: {{rule.operation}} {{rule.header || ""}} "{{rule.value}}" 
             <span class="glyphicon glyphicon-arrow-right"></span> {{rule.backend}}<br/>
           </span>
         </li>
-        <li>Natives: {{fe.natives}}</li>
+        <li><div class="icon-cogs"></div> <strong>natives</strong>
+          <ul>
+            <li ng-repeat="native in fe.natives">{{natives}}</li>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>
@@ -71,51 +75,3 @@
   </div>
   <span class="clearfix"></span>
 </div>
-
-
-<!--     <div class="backends">
-      <h5>Backends</h5>
-      <div ng-repeat="be in backends">
-        <div>
-          <h4>{{be.key}}
-            <span class="label label-{{statusLabelClass(statuses[be.id].status)}}">
-              {{statuses[be.id].status}}
-            </span>
-          </h4>
-          <span ng-switch on="be.type">
-            <span ng-switch-when="dynamic">{{be.name}}@
-
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary btn-xs">{{be.version}}</button>
-              <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="v in versionMap[be.id]"><a href="#" ng-click="changeVersion(be, v.version)">{{v.version}} ({{v.count}})</a></li>
-              </ul>
-            </div>
-
-            </span>
-            <span ng-switch-when="static">static</span>
-          </span>
-        </div>
-        <div class="time-series-wrapper inline">
-          <span class="time-series-label">{{statuses[be.id].connections.current}} connections / {{statuses[be.id].connections.max}} max</span><br/>
-          <time-series data="connStats[be.id]" width="300" height="80" axis="true" type="area"></time-series>
-        </div>
-        <servers-donut class="inline" total="{{be.members.length}}" healthy="{{healthCounts[be.id]}}"></servers-donut>
-
-        <div class="members">
-          <h5>Members</h5>
-          <div class="well">
-            <div ng-repeat="member in be.members">
-              {{member.host}}:{{member.port}} 
-              <span class="label label-{{statusLabelClass(statuses[member.id].status)}}" style="float: right">
-                {{statuses[member.id].status}}
-              </span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div> -->
