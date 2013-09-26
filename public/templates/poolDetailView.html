@@ -54,7 +54,7 @@
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="(v,c) in versionMap[be.id]"><a href="#" ng-click="changeVersion(be, v)">{{v}} ({{c}})</a></li>
+                <li ng-repeat="v in versionMap[be.id]"><a href="#" ng-click="changeVersion(be, v.version)">{{v.version}} ({{v.count}})</a></li>
               </ul>
             </div>
 

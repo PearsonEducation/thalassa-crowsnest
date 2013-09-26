@@ -26,13 +26,13 @@ angular.module('crowsnest').controller('PoolDetailController', function ($scope,
       $scope.connStats[be.id] = ps.getBackendConnectionStats(be.key);
       $scope.statuses[be.id] = ps.getBackendStatus(be.key);
       $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.key);
-      $scope.versionMap[be.id] = dataStream.getServices()
+      var beVersionMap = dataStream.getServices()
         .filter(function (s) { return (s.name === be.name)})
-        .reduce(function (p, c) { console.log(c); p[c.version] = (p[c.version] || 0) + 1; return p; }, {});
-
+        .reduce(function (p, c) { p[c.version] = (p[c.version] || 0) + 1; return p; }, {});
+        $scope.versionMap[be.id] = Object.keys(beVersionMap).map(function (k) { return { version: k, count: beVersionMap[k] }; });
       be.members.forEach(function (member) {
         $scope.statuses[member.id] = ps.getBackendMemberStatus(be.key, member.host, member.port);
-        console.log(dataStream.getServices());
+        //console.log(dataStream.getServices());
         //$scope.connStats[member.id] = ps.getBackendMemberConnectionStats(be.key, member.host, member.port);
       });
     };
