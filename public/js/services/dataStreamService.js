@@ -30,9 +30,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   data.getActivity = function getServices () { return activity; };
   data.getPoolServers = function getPoolServers () { return aqueductServers; };
   data.getPoolServer = function getPoolServer(id) {
-    return (Object.keys(aqueductServers)
-      .map(function (key) { return aqueductServers[key]; })
-      .filter(function (ps) { return (id === id)})[0]);
+    return aqueductServers[id];
   }
   data.connection = null;
 
