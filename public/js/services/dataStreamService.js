@@ -46,6 +46,7 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
   var emitServicesChanged = _.debounce(function () { data.emit('services-changed') }, 400);
   var emitPoolsChanged = _.debounce(function () { data.emit('pools-changed') }, 400);
   var emitStatsChanged = _.debounce(function () { data.emit('stats-changed') }, 400);
+  var emitActivityChanged = _.debounce(function () { data.emit('activity-changed') }, 400);
 
   function AqueductServer(meta) {
     var id = meta.service.id;
@@ -217,7 +218,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
     thalassaDoc  = new crdt.Doc();
     // create a set of all docs
     var thalassaServicesSet = thalassaDoc.createSet('type', 'service');
-    var thalassaActivitySet = thalassaDoc.createSeq('type', 'activity');
 
     thalassaServicesSet.on('add', function (row) {
       services.push(row.toJSON().service)
@@ -233,18 +233,6 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
       services = services.filter(function (s) { return s.id !== service.id; });
       emitServicesChanged();
       data.emit('service-removed', row);
-    });
-
-    thalassaActivitySet.on('add', function (row) {
-      activity.push(row.toJSON())
-      data.emit('activity-changed');
-    })
-
-    thalassaActivitySet.on('remove', function (row) {
-      var ev = row.toJSON();
-      activity = activity.filter(function (a) { return a.id !== ev.id; });
-      emitServicesChanged();
-      data.emit('activity-changed');
     });
 
   }
@@ -330,6 +318,12 @@ angular.module('crowsnest').factory('dataStream', function (browserify, $rootSco
           if (stat.time < (statArray.last() || {} ).time || 0) return;
           statArray.push(stat);
           emitStatsChanged();
+        });
+      }
+      else if (s.meta.type === 'activity') {
+        s.on('data', function (activityObj) {
+          activity.push(activityObj);
+          emitActivityChanged();
         });
       }
       else if (s.meta.type === 'control') {

@@ -310,6 +310,10 @@ div.favorites .favorite-false {
 	background-color: #d9534f;
 }
 
+.label-started {
+	background-color: #f0ad4e;
+}
+
 .time-series-label {
 	opacity: 0.8;
     font-size: 0.9em;

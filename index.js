@@ -22,13 +22,18 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
   });
 
   this.thalassa.client.register(pkg.name, pkg.version, opts.port);
+  // TODO make client.register return the registration instead of this hack that blows encapsulation
+  self.me = this.thalassa.client.intents[0];
 
   //
   // Stream stats into a leveldb
   // TODO add optional statsd emitter
   //
-  this.db = new Db(opts);
+  this.db = new Db(opts, function () {
+    self.db.writeActivity({ type: 'activity',  time: Date.now(), verb: 'started', object: self.me.id })
+  });;
   this.thalassa.on('stat', this.db.writeStat.bind(this.db));
+  this.thalassa.on('activity', this.db.writeActivity.bind(this.db));
 
   //
   // Create a new MuxDemux stream for each browser client.
@@ -72,19 +77,30 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
     // wire up a stats stream to send realtime aqueduct stats to the client
     //
     var statStream = mx.createWriteStream({ type: 'stat' });
-    var writeListener = function (stat) {
+    var statWriteListener = function (stat) {
       if (statSubscriptions[stat.hostId]) {
         statStream.write(stat);
       }
     };
-    this.thalassa.on('stat', writeListener);
+    this.thalassa.on('stat', statWriteListener);
 
     function sendStatsForHostId(hostId) {
       self.db.statsValueStream(hostId).pipe(through(function write(data) { statStream.write(data); }));
     }
 
+    //
+    // wire up an activity stream 
+    //
+    var activityStream = mx.createWriteStream({ type: 'activity' });
+    var activityWriteListenery = function (activityObj) {
+      activityStream.write(activityObj);
+    }
+    this.thalassa.on('activity', activityWriteListenery);
+    self.db.activityValueStream().pipe(through(function write(data) { activityStream.write(data); }));
+
     mx.on('end', function () {
-      self.thalassa.removeListener('stat', writeListener);
+      self.thalassa.removeListener('stat', statWriteListener);
+      self.thalassa.removeListener('activity', activityWriteListenery);
       statStream.destroy();
       controlStream.destroy();
     });
