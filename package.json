@@ -22,6 +22,10 @@
     "proxy"
   ],
   "author": "Mike Brevoort <mike.brevoort@pearson.com>",
+  "contributors": [
+    "Mike Brevoort <mike.brevoort@pearson.com>",
+    "Cory Grunkemeyer <cory.grunkemeyer@pearson.com"
+  ],
   "license": "Apache2",
   "readmeFilename": "README.md",
   "bugs": {
