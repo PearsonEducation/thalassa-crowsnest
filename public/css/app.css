@@ -314,6 +314,14 @@ div.favorites .favorite-false {
 	background-color: #f0ad4e;
 }
 
+.label-haproxyRestarted {
+	background-color: #f0ad4e;
+}
+
+.label-haproxyConfigChanged {
+	background-color: #428bca;
+}
+
 .time-series-label {
 	opacity: 0.8;
     font-size: 0.9em;
