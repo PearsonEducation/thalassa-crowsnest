@@ -12,7 +12,7 @@ Crowsnest is a realtime dashboard for [Thalassa](https://github.com/PearsonEduca
 
 The easiest way to run Crowsnest at this point is with the bin script from the command line. Crowsnest is exposed as a module and can be used as such in your own application but you should have [a close look](https://github.com/PearsonEducation/thalassa-crowsnest/blob/master/bin/server.js#L65) at how the SockJS connection is configured.
 
-    ./node_modules/.bin/thalassa-aqueduct
+    ./node_modules/.bin/thalassa-crowsnest
 
 
 ## Options
