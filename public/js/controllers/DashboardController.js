@@ -22,6 +22,7 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
       $scope.backends[ps.id] = ps.getBackends();
       $scope.connStats[ps.id] = {};
       $scope.statuses[ps.id] = {};
+      $scope.healthCounts[ps.id] = {};
       for (k in $scope.frontends[ps.id]) {
         var fe = $scope.frontends[ps.id][k];
         $scope.connStats[ps.id][fe.id] = ps.getFrontendConnectionStats(fe.key);
@@ -31,7 +32,7 @@ angular.module('crowsnest').controller('DashboardController', function ($scope, 
         var be = $scope.backends[ps.id][k];
         $scope.connStats[ps.id][be.id] = ps.getBackendConnectionStats(be.key);
         $scope.statuses[ps.id][be.id] = ps.getBackendStatus(be.key);
-        $scope.healthCounts[be.id] = ps.getBackendMemberHealthCount(be.key);
+        $scope.healthCounts[ps.id][be.id] = ps.getBackendMemberHealthCount(be.key);
       };
     });
   }
