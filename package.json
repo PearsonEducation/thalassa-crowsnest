@@ -1,6 +1,6 @@
 {
   "name": "thalassa-crowsnest",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A vantage point for Thalassa",
   "main": "index.js",
   "scripts": {
