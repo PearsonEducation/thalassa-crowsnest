@@ -85,11 +85,13 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
     this.thalassa.on('stat', statWriteListener);
 
     function sendStatsForHostId(hostId) {
-      self.db.statsValueStream(hostId).pipe(through(writeStatStream));
+      self.db.statsValueStream().pipe(through(writeStatStream.bind(this,hostId)));
     }
 
-    function writeStatStream (data) {
-      if (!statStream.destroyed) statStream.write(data);
+    function writeStatStream (hostId, data) {
+      if (!statStream.destroyed && data['hostId'] === hostId){ 
+        statStream.write(data);
+      }
     }
 
     //

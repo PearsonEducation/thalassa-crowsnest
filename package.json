@@ -50,7 +50,8 @@
     "thalassa": "~0.3.2",
     "through": "~2.3.4",
     "websocket-stream": "~0.2.0",
-    "ws": "0.4.27"
+    "ws": "0.4.27",
+    "tailable-capped-array": "^0.1.0"
   },
   "engines": {
     "node": ">0.10.0"
