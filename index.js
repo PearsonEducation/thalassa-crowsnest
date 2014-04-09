@@ -77,13 +77,7 @@ var Crowsnest = module.exports = function Crowsnest (opts) {
     // wire up a stats stream to send realtime aqueduct stats to the client
     //
     var statStream = mx.createWriteStream({ type: 'stat' });
-    var statWriteListener = function (stat) {
-      if (statSubscriptions[stat.hostId]) {
-        statStream.write(stat);
-      }
-    };
-    this.thalassa.on('stat', statWriteListener);
-
+    
     function sendStatsForHostId(hostId) {
       self.db.statsValueStream().pipe(through(writeStatStream.bind(this,hostId)));
     }
