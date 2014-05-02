@@ -1,6 +1,6 @@
 {
   "name": "thalassa-crowsnest",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "A vantage point for Thalassa",
   "main": "index.js",
   "scripts": {
@@ -47,7 +47,7 @@
     "request": "~2.27.0",
     "shoe": "~0.0.11",
     "split": "~0.2.10",
-    "thalassa": "~0.3.2",
+    "thalassa": "~0.4.0",
     "through": "~2.3.4",
     "websocket-stream": "~0.2.0",
     "ws": "0.4.27",
