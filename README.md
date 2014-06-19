@@ -1,3 +1,6 @@
+PLEASE NOTE: The latest version of [Thalassa Aqueduct](https://github.com/PearsonEducation/thalassa-aqueduct) provides a decentralized UI that is a replacement for Crowsnest. Moving forward the [Aqueduct Web UI](https://github.com/PearsonEducation/thalassa-aqueduct#web-ui) should be used instead of Crowsnest. 
+
+
 Thalassa Crowsnest
 ==================
 
